@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THEATRON | Cinema Details — Islamabad Flagship</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="mem5.css">
+  <style>
+    .subpage-tab-btn {
+      background: #160508;
+      border: 1px solid var(--border-burgundy);
+      color: var(--text-muted);
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .subpage-tab-btn:hover { color: #fff; border-color: var(--gold-primary); }
+    .subpage-tab-btn.active {
+      background: linear-gradient(135deg, #6e1222, #3b0811);
+      border-color: var(--gold-primary);
+      color: var(--gold-light);
+      box-shadow: 0 6px 22px rgba(158, 27, 50, 0.48);
+    }
+    .seat-node {
+      width: 30px;
+      height: 28px;
+      border-radius: 7px 7px 3px 3px;
+      font-size: 10px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.2s;
+      border: 1px solid var(--border-gold);
+      background: #24080e;
+      color: #fff;
+    }
+    .seat-node:hover:not(.occupied) {
+      background: var(--gold-primary);
+      color: #120406;
+      transform: translateY(-2px);
+    }
+    .seat-node.selected {
+      background: var(--gold-primary);
+      color: #120406;
+      box-shadow: 0 0 12px rgba(212, 175, 55, 0.8);
+    }
+    .seat-node.occupied {
+      background: #140507;
+      border-color: #3a151c;
+      color: #5e3b42;
+      cursor: not-allowed;
+    }
+    .faq-item {
+      background: #140407;
+      border: 1px solid var(--border-burgundy);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .faq-item.open { border-color: var(--gold-primary); }
+    .faq-question {
+      width: 100%;
+      text-align: left;
+      padding: 15px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+    }
+    .faq-answer {
+      display: none;
+      padding: 0 18px 16px;
+      font-size: 12.5px;
+      line-height: 1.65;
+      color: #e6d7d5;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 12px;
+    }
+    .faq-item.open .faq-answer { display: block; }
+  </style>
+</head>
+<body>
+  <canvas id="ambientDustCanvas"></canvas>
+  <div class="cursor-spotlight" id="cursorSpotlight"></div>
+
+  <div class="top-utility">
+    <div>
+      <span>PRIVATE SCREENING &amp; LUXURY CINEMA</span>
+      <span class="mx-2">|</span>
+      <span><i class="gold-dot"></i>ISLAMABAD FLAGSHIP • CINEMA DETAILS</span>
+    </div>
+    <div>
+      <span>SECTOR F-7 MARKAZ</span>
+      <span class="mx-2">|</span>
+      <span>Alexander</span>
+    </div>
+  </div>
+
+  <nav class="navbar">
+    <a href="cinema-detail.html" class="brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-text">
+        <h1>THEATRON</h1>
+        <span>CINEMA LOUNGES</span>
+      </div>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="cinema-detail.html" class="nav-link active">Cinema Details</a></li>
+      <li><a href="food-snacks.html" class="nav-link">Food &amp; Snacks</a></li>
+      <li><a href="reviews.html" class="nav-link">Reviews</a></li>
+    </ul>
+
+    <div>
+      <button class="tray-btn" onclick="toggleTrayDrawer()">
+        <span>🍿 Lounge Tray</span>
+        <span class="badge-count" id="trayCount">2</span>
+      </button>
+    </div>
+  </nav>
+
+  <main id="view-cinema" style="position: relative; z-index: 2;">
+    <!-- 1. CINEMATIC HERO SECTION -->
+    <section class="relative overflow-hidden reveal-on-scroll is-visible" style="padding: 30px 4% 18px;">
+      <div class="max-w-6xl mx-auto rounded-3xl overflow-hidden relative" style="border: 1.5px solid var(--border-gold); box-shadow: 0 30px 75px rgba(0,0,0,0.9), 0 0 50px rgba(158,27,50,0.32);">
+        <div class="relative min-h-[410px] p-7 md:p-11 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center" style="background: #0d0406;">
+          <video id="video-cinema-bg" class="absolute inset-0 w-full h-full object-cover z-0" autoplay loop muted playsinline disablepictureinpicture poster="images/auditorium-hall01.jpg">
+            <source src="cinema.mp4" type="video/mp4">
+          </video>
+          <div class="absolute inset-0 pointer-events-none z-[1]" style="background: linear-gradient(95deg, rgba(13,4,6,0.92) 0%, rgba(18,4,7,0.78) 52%, rgba(13,4,6,0.52) 100%);"></div>
+
+          <div class="lg:col-span-9 relative z-10">
+            <span class="pill-tag mb-3">FLAGSHIP SANCTUARY • DUAL-LASER IMAX &amp; DOLBY ATMOS</span>
+            <h2 class="hero-title text-left" style="font-size: clamp(1.5rem, 2.55vw, 2.2rem); line-height: 1.18; margin-bottom: 14px;">
+              MORE THAN JUST A MOVIE.
+              <span>IT'S AN EXPERIENCE.</span>
+            </h2>
+            <p class="text-sm leading-relaxed mb-6" style="color: #eadbd9; max-width: 560px;">
+              Welcome to THEATRON Islamabad—a bespoke cinema destination where architectural maroon velvet acoustics, 4K Dual-Laser projection, interactive recliner seating, and silent in-seat butler dining transform every screening.
+            </p>
+            <div class="flex flex-wrap gap-3">
+              <a href="#cinemaSubpages" class="gold-cta-btn no-underline">Explore All 5 Cinema Sections ↓</a>
+              <a href="food-snacks.html" class="filter-btn" style="background: rgba(13,4,6,0.78); backdrop-filter: blur(6px);">Food &amp; Snacks Menu →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGES INSIDE PAGE: COMPLETE 5-TAB CINEMA DETAILS NAVIGATION -->
+    <section id="cinemaSubpages" class="max-w-6xl mx-auto px-4 pb-16 space-y-8">
+      <div class="p-4 rounded-2xl flex flex-wrap justify-between items-center gap-2.5" style="background: #140407; border: 1.5px solid var(--border-gold);">
+        <div class="flex flex-wrap gap-2">
+          <button class="subpage-tab-btn active" onclick="switchSubPage('cinema-subpages', 'cin-sub-repertoire', this)">🎬 01. Repertoire &amp; Hasnain</button>
+          <button class="subpage-tab-btn" onclick="switchSubPage('cinema-subpages', 'cin-sub-seating', this)">🛋️ 02. Auditoriums &amp; Live Seat Map</button>
+          <button class="subpage-tab-btn" onclick="switchSubPage('cinema-subpages', 'cin-sub-facilities', this)">✨ 03. Restrooms, Lounge &amp; Facilities</button>
+          <button class="subpage-tab-btn" onclick="switchSubPage('cinema-subpages', 'cin-sub-gallery', this)">📸 04. Gallery &amp; Interactive Map</button>
+          <button class="subpage-tab-btn" onclick="switchSubPage('cinema-subpages', 'cin-sub-faq', this)">❓ 05. Cinema FAQ &amp; Policies</button>
+        </div>
+      </div>
+
+      <!-- SUB-PAGE 1: ALL-GENRE REPERTOIRE & HASNAIN SPOTLIGHT -->
+      <div id="cin-sub-repertoire" data-subpage-group="cinema-subpages" class="rounded-3xl p-7 md:p-9" style="background: linear-gradient(155deg, #1d060b 0%, #0d0204 100%); border: 1.5px solid var(--border-gold); box-shadow: 0 24px 60px rgba(0,0,0,0.85);">
+        <div class="flex flex-wrap justify-between items-end gap-4 mb-6 pb-4" style="border-bottom: 1px solid rgba(212,175,55,0.2);">
+          <div>
+            <span class="text-xs uppercase tracking-widest font-bold" style="color: var(--gold-primary);">🎬 CLICK ANY POSTER FOR DETAILS &amp; FOOD PAIRING</span>
+            <h3 style="font-family: var(--font-display); font-size: 26px; color: #fff; margin-top: 2px;">ALL-GENRE CURATED REPERTOIRE</h3>
+          </div>
+          <div class="flex flex-wrap gap-2" id="genreRepertoireTabs">
+            <button class="filter-btn active" onclick="filterRepertoire('All', this)">All Genres</button>
+            <button class="filter-btn" onclick="filterRepertoire('Action', this)">💥 Action</button>
+            <button class="filter-btn" onclick="filterRepertoire('Love Story', this)">🌹 Love Story</button>
+            <button class="filter-btn" onclick="filterRepertoire('Horror', this)">🕯️ Horror</button>
+            <button class="filter-btn" onclick="filterRepertoire('Documentary', this)">🌍 Documentary</button>
+          </div>
+        </div>
+
+        <!-- Most Liked Actor — Hasnain Spotlight -->
+        <div class="rounded-2xl p-5 md:p-6 mb-7 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center tilt-card" style="background: linear-gradient(135deg, rgba(158,27,50,0.28), rgba(14,3,5,0.95)); border: 1px solid var(--gold-primary);">
+          <div class="lg:col-span-4">
+            <div class="rounded-xl overflow-hidden relative h-48" style="background: #0b0204;">
+              <video id="video-hasnain" class="w-full h-full object-cover" autoplay loop muted playsinline disablepictureinpicture poster="images/movie-hasnain.jpg">
+                <source src="hasnain.mp4" type="video/mp4">
+              </video>
+              <span class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded text-[9px] font-extrabold uppercase pointer-events-none" style="background: var(--gold-primary); color: #120406;">★ MOST LIKED ACTOR</span>
+            </div>
+          </div>
+          <div class="lg:col-span-8">
+            <span class="text-xs uppercase tracking-widest font-bold" style="color: var(--gold-light);">AUDIENCE CHOICE • ACTION IMAX HEADLINER</span>
+            <h4 style="font-family: var(--font-display); font-size: 23px; color: #fff; margin: 4px 0 8px;">
+              HASNAIN — <span style="color: var(--gold-primary);">SHADOW STRIKE: VENGEANCE</span>
+            </h4>
+            <p class="text-xs md:text-sm leading-relaxed mb-4" style="color: #e6d7d5;">
+              Voted THEATRON’s #1 Most Liked Actor by over 18,400 Islamabad cinephiles. Experience Hasnain’s high-altitude rooftop stunts and Dolby Atmos action choreography on our 72ft Dual-Laser IMAX screen.
+            </p>
+            <div class="flex flex-wrap gap-3">
+              <button type="button" onclick="openTicketBookingModal('Shadow Strike: Vengeance (Starring Hasnain)', 'Hall 01 • Dual-Laser IMAX')" class="gold-cta-btn" style="padding: 9px 18px; font-size: 12px;">
+                🎟️ Book Hasnain IMAX Premiere
+              </button>
+              <button type="button" onclick="goToFoodForMovie('Shadow Strike: Vengeance')" class="filter-btn">
+                🍿 Order Hasnain Action Food Pairing →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" id="repertoireGrid"></div>
+      </div>
+
+      <!-- SUB-PAGE 2: AUDITORIUMS & INTERACTIVE SEAT MAP -->
+      <div id="cin-sub-seating" data-subpage-group="cinema-subpages" style="display: none;" class="space-y-8">
+        <div class="text-center">
+          <span class="pill-tag mb-2">AUDITORIUMS, LASER TECH &amp; INTERACTIVE SEAT MAP</span>
+          <h3 style="font-family: var(--font-display); font-size: 26px; color: var(--gold-primary);">SELECT HALL &amp; PREVIEW YOUR RECLINER</h3>
+        </div>
+        <div class="flex flex-wrap justify-center gap-3" id="auditoriumTabs">
+          <button class="filter-btn active" onclick="selectAuditorium(0, this)">Hall 01 • Dual-Laser IMAX</button>
+          <button class="filter-btn" onclick="selectAuditorium(1, this)">Hall 02 • Royal Velvet Lounge</button>
+          <button class="filter-btn" onclick="selectAuditorium(2, this)">Hall 03 • Dolby Atmos VIP</button>
+        </div>
+        <div class="rounded-2xl p-7 md:p-8" style="background: linear-gradient(155deg, #21070c, #100305); border: 1.5px solid var(--border-gold); box-shadow: 0 24px 55px rgba(0,0,0,0.85);" id="auditoriumShowcase"></div>
+
+        <!-- INTERACTIVE SEAT MAP & PRICING TIERS -->
+        <div class="rounded-3xl p-6 md:p-8" style="background: #140407; border: 1.5px solid var(--border-gold);">
+          <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
+            <div>
+              <span class="text-xs uppercase tracking-widest font-bold" style="color: var(--gold-primary);">LIVE AUDITORIUM SEATING CHART</span>
+              <h4 style="font-family: var(--font-display); font-size: 21px; color: #fff;">CLICK SEATS TO SELECT &amp; LOCK YOUR BAY</h4>
+            </div>
+            <div class="flex flex-wrap gap-4 text-xs">
+              <span class="flex items-center gap-1.5"><span class="seat-node" style="width:16px;height:16px;"></span> Available</span>
+              <span class="flex items-center gap-1.5"><span class="seat-node selected" style="width:16px;height:16px;"></span> Selected</span>
+              <span class="flex items-center gap-1.5"><span class="seat-node occupied" style="width:16px;height:16px;"></span> Reserved</span>
+            </div>
+          </div>
+
+          <!-- Curved IMAX Screen Indicator -->
+          <div class="max-w-xl mx-auto mb-7 text-center">
+            <div class="h-3 rounded-full mx-auto" style="background: linear-gradient(90deg, transparent, var(--gold-primary), transparent); box-shadow: 0 6px 24px rgba(212,175,55,0.65);"></div>
+            <span class="text-[10px] uppercase tracking-[0.25em] block mt-2" style="color: var(--gold-light);">72FT CURVED DUAL-LASER SILVER SCREEN</span>
+          </div>
+
+          <!-- Seat Grid -->
+          <div id="interactiveSeatMap" class="space-y-2.5 max-w-xl mx-auto text-center overflow-x-auto pb-2"></div>
+
+          <!-- Selected Seats Summary Bar -->
+          <div class="mt-6 p-4 rounded-2xl flex flex-wrap justify-between items-center gap-4" style="background: #1d060b; border: 1px solid var(--border-burgundy);">
+            <div>
+              <span class="text-xs block" style="color: var(--text-muted);">Selected VIP Recliners:</span>
+              <strong id="selectedSeatsReadout" class="text-sm" style="color: var(--gold-light);">Row E • Seats E5, E6 (PKR 4,400)</strong>
+            </div>
+            <button onclick="bookSelectedMapSeats()" class="gold-cta-btn" style="padding: 10px 20px; font-size: 12px;">
+              🎟️ Lock Selected Seats &amp; Continue →
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-PAGE 3: RESTROOMS, LOUNGE, ACCESSIBILITY & LEGACY -->
+      <div id="cin-sub-facilities" data-subpage-group="cinema-subpages" style="display: none;" class="space-y-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center rounded-3xl p-7 md:p-9" style="background: linear-gradient(155deg, #1b060a 0%, #0e0204 100%); border: 1px solid var(--border-burgundy);">
+          <div class="lg:col-span-6">
+            <span class="text-xs uppercase tracking-widest font-bold" style="color: var(--gold-primary);">ARCHITECTURAL EXCELLENCE</span>
+            <h3 style="font-family: var(--font-display); font-size: 26px; color: #fff; margin: 4px 0 12px;">RESTROOMS, LOUNGES &amp; FLOORPLAN</h3>
+            <p class="text-sm leading-relaxed mb-4" style="color: var(--text-muted);">
+              Every square foot of THEATRON Islamabad is designed for effortless comfort—from our dedicated obsidian marble restrooms on every level to private mother-and-infant suites, prayer rooms, and silent butler corridors.
+            </p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+              <div class="p-3 rounded-xl text-center" style="background: #120306; border: 1px solid var(--border-burgundy);">
+                <strong style="font-family: var(--font-display); font-size: 18px; color: var(--gold-primary);">142K+</strong>
+                <span class="text-[10px] block" style="color: var(--text-muted);">VIP Seats Sold</span>
+              </div>
+              <div class="p-3 rounded-xl text-center" style="background: #120306; border: 1px solid var(--border-burgundy);">
+                <strong style="font-family: var(--font-display); font-size: 18px; color: var(--gold-primary);">6 Suites</strong>
+                <span class="text-[10px] block" style="color: var(--text-muted);">Marble Restrooms</span>
+              </div>
+              <div class="p-3 rounded-xl text-center" style="background: #120306; border: 1px solid var(--border-burgundy);">
+                <strong style="font-family: var(--font-display); font-size: 18px; color: var(--gold-primary);">100%</strong>
+                <span class="text-[10px] block" style="color: var(--text-muted);">Wheelchair Access</span>
+              </div>
+              <div class="p-3 rounded-xl text-center" style="background: #120306; border: 1px solid var(--border-burgundy);">
+                <strong style="font-family: var(--font-display); font-size: 18px; color: var(--gold-primary);">24/7</strong>
+                <span class="text-[10px] block" style="color: var(--text-muted);">Valet &amp; Security</span>
+              </div>
+            </div>
+          </div>
+          <div class="lg:col-span-6">
+            <div class="rounded-2xl overflow-hidden" style="border: 1.5px solid var(--border-gold);">
+              <img src="images/combo-royal-feast.jpg" alt="THEATRON In-Seat Dining" class="w-full h-64 object-cover">
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed 6-Card Facilities, Restrooms & Accessibility Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div class="p-5 rounded-2xl" style="background: #1b060a; border: 1px solid var(--border-gold);">
+            <div class="text-2xl mb-2">✨</div>
+            <h4 style="font-family: var(--font-display); font-size: 16px; color: var(--gold-light);">Obsidian Marble Restrooms</h4>
+            <p class="text-xs mt-1.5 leading-relaxed" style="color: var(--text-muted);">Located on both Lobby (Level 1) and VIP Balcony (Level 2) wings. Touchless sensor faucets, Dyson Airblade dryers, heated mirrors, and dedicated full-time attendants.</p>
+          </div>
+          <div class="p-5 rounded-2xl" style="background: #1b060a; border: 1px solid var(--border-burgundy);">
+            <div class="text-2xl mb-2">👶</div>
+            <h4 style="font-family: var(--font-display); font-size: 16px; color: var(--gold-light);">Family &amp; Infant Care Suites</h4>
+            <p class="text-xs mt-1.5 leading-relaxed" style="color: var(--text-muted);">Private nursing lounges adjacent to the East Wing restrooms equipped with sanitized changing stations, bottle warmers, and acoustic glass.</p>
+          </div>
+          <div class="p-5 rounded-2xl" style="background: #1b060a; border: 1px solid var(--border-burgundy);">
+            <div class="text-2xl mb-2">🕌</div>
+            <h4 style="font-family: var(--font-display); font-size: 16px; color: var(--gold-light);">Dedicated Prayer Rooms &amp; Wudu Area</h4>
+            <p class="text-xs mt-1.5 leading-relaxed" style="color: var(--text-muted);">Separate serene, carpeted men’s and women’s prayer rooms with temperature-controlled marble wudu facilities on Level 1.</p>
+          </div>
+          <div class="p-5 rounded-2xl" style="background: #1b060a; border: 1px solid var(--border-burgundy);">
+            <div class="text-2xl mb-2">🅿️</div>
+            <h4 style="font-family: var(--font-display); font-size: 16px; color: var(--gold-light);">2-Level Basement Valet &amp; EV Bays</h4>
+            <p class="text-xs mt-1.5 leading-relaxed" style="color: var(--text-muted);">Covered subterranean parking for 240 vehicles with 8 fast EV chargers and complimentary VIP valet drop-off at the West Portico.</p>
+          </div>
+          <div class="p-5 rounded-2xl" style="background: #1b060a; border: 1px solid var(--border-burgundy);">
+            <div class="text-2xl mb-2">♿</div>
+            <h4 style="font-family: var(--font-display); font-size: 16px; color: var(--gold-light);">Step-Free Elevators &amp; Companion Bays</h4>
+            <p class="text-xs mt-1.5 leading-relaxed" style="color: var(--text-muted);">Wide-door Otis elevators from B2 parking directly to all 3 auditoriums, plus flat-floor wheelchair bays with companion recliners.</p>
+          </div>
+          <div class="p-5 rounded-2xl" style="background: #1b060a; border: 1px solid var(--border-burgundy);">
+            <div class="text-2xl mb-2">🛎️</div>
+            <h4 style="font-family: var(--font-display); font-size: 16px; color: var(--gold-light);">Silent Butler Corridors &amp; Coat Check</h4>
+            <p class="text-xs mt-1.5 leading-relaxed" style="color: var(--text-muted);">Rear-entry service aisles allow our servers to deliver warm meals and blankets without ever crossing in front of the projector beam.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-PAGE 4: PHOTO GALLERY & INTERACTIVE LOCATION MAP -->
+      <div id="cin-sub-gallery" data-subpage-group="cinema-subpages" style="display: none;" class="space-y-8">
+        <div>
+          <div class="flex flex-wrap justify-between items-end gap-4 mb-6">
+            <div>
+              <span class="text-xs uppercase tracking-widest font-bold" style="color: var(--gold-primary);">CLICK ANY PHOTO FOR FULLSCREEN VIEW</span>
+              <h3 style="font-family: var(--font-display); font-size: 26px; color: #fff; margin-top: 2px;">THEATRON PHOTO GALLERY</h3>
+            </div>
+            <div class="flex flex-wrap gap-2" id="galleryTabs">
+              <button class="filter-btn active" onclick="filterGallery('All', this)">All Spaces</button>
+              <button class="filter-btn" onclick="filterGallery('Auditoriums', this)">Auditoriums</button>
+              <button class="filter-btn" onclick="filterGallery('Lounge & Dining', this)">Lounge &amp; Dining</button>
+              <button class="filter-btn" onclick="filterGallery('Architecture', this)">Architecture</button>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" id="photoGalleryGrid"></div>
+        </div>
+
+        <!-- INTERACTIVE LOCATION & EMBEDDED ISLAMABAD MAP -->
+        <div class="rounded-3xl p-7 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-7 items-center" style="background: #140407; border: 1.5px solid var(--border-gold);">
+          <div class="lg:col-span-5 space-y-3">
+            <span class="text-xs uppercase tracking-widest font-bold" style="color: var(--gold-primary);">LOCATION, MAP &amp; VALET ENTRANCE</span>
+            <h3 style="font-family: var(--font-display); font-size: 24px; color: #fff;">ISLAMABAD FLAGSHIP</h3>
+            <p class="text-sm leading-relaxed" style="color: var(--text-muted);">
+              Plot 14-B, Jinnah Super Boulevard, Sector F-7 Markaz, Islamabad 44000, Pakistan
+            </p>
+            <div class="text-xs space-y-2 pt-1" style="color: #eadbd9;">
+              <div>🕒 <strong>Box Office &amp; Lounges:</strong> Daily 12:00 PM – 02:30 AM</div>
+              <div>🚗 <strong>Valet Drop-Off:</strong> West Gate via Bhittai Road (F-7 Markaz)</div>
+              <div>📞 <strong>VIP Concierge &amp; Private Galas:</strong> +92 (51) 111-843-287</div>
+              <div>✉️ <strong>Reservations:</strong> concierge@theatron.pk</div>
+            </div>
+            <div class="pt-3 flex flex-wrap gap-2">
+              <a href="https://maps.google.com/?q=33.7215,73.0572" target="_blank" rel="noopener" class="gold-cta-btn no-underline" style="padding: 9px 16px; font-size: 11.5px;">🧭 Open in Google Maps ↗</a>
+              <button onclick="openTicketBookingModal('VIP Evening Screening', 'Hall 01 • Dual-Laser IMAX')" class="filter-btn">🎟️ Book Visit</button>
+            </div>
+          </div>
+          <div class="lg:col-span-7">
+            <div class="rounded-2xl overflow-hidden" style="border: 1px solid var(--border-gold); height: 290px;">
+              <iframe
+                title="THEATRON Islamabad F-7 Markaz Map"
+                width="100%"
+                height="100%"
+                style="border:0; filter: invert(90%) hue-rotate(180deg) contrast(95%);"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                src="https://www.openstreetmap.org/export/embed.html?bbox=73.0480%2C33.7150%2C73.0660%2C33.7280&amp;layer=mapnik&amp;marker=33.7215%2C73.0572">
+              </iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUB-PAGE 5: CINEMA FAQ & HOUSE POLICIES -->
+      <div id="cin-sub-faq" data-subpage-group="cinema-subpages" style="display: none;" class="space-y-6">
+        <div class="flex flex-wrap justify-between items-end gap-4">
+          <div>
+            <span class="text-xs uppercase tracking-widest font-bold" style="color: var(--gold-primary);">GUEST HANDBOOK &amp; POLICIES</span>
+            <h3 style="font-family: var(--font-display); font-size: 26px; color: #fff; margin-top: 2px;">FREQUENTLY ASKED QUESTIONS (FAQ)</h3>
+          </div>
+          <input id="faqSearchInput" oninput="filterFaqList()" type="text" placeholder="Search parking, refunds, food, kids..." class="seat-select w-full sm:w-72">
+        </div>
+        <div id="cinemaFaqAccordion" class="space-y-3"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MOVIE DETAIL MODAL -->
+  <div id="movieDetailModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 225; align-items: center; justify-content: center; padding: 16px;">
+    <div class="w-full max-w-xl rounded-2xl p-6 relative grid grid-cols-1 sm:grid-cols-12 gap-5 items-center" style="background: #140407; border: 1.5px solid var(--gold-primary);">
+      <button onclick="closeMovieDetailModal()" class="absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded" style="background: #26080e; color: #fff;">✕</button>
+      <div class="sm:col-span-5">
+        <img id="mdPoster" src="" alt="Movie Poster" class="w-full h-64 object-cover rounded-xl">
+      </div>
+      <div class="sm:col-span-7 space-y-3">
+        <h3 id="mdTitle" style="font-family: var(--font-display); font-size: 20px; color: #fff;">Movie</h3>
+        <p id="mdMeta" class="text-[11px] font-bold" style="color: var(--gold-primary);"></p>
+        <p id="mdSynopsis" class="text-xs leading-relaxed" style="color: #e6d7d5;"></p>
+        <div class="p-3 rounded-xl text-xs" style="background: #1e070c; border: 1px solid var(--border-burgundy); color: var(--gold-light);">
+          🍿 <strong>Chef Pairing:</strong> <span id="mdPairingNote"></span>
+        </div>
+        <div class="flex flex-wrap gap-2 pt-1">
+          <button id="mdBookBtn" class="gold-cta-btn" style="padding: 8px 14px; font-size: 11px;">🎟️ Book VIP Seat</button>
+          <button id="mdFoodBtn" class="filter-btn" style="padding: 8px 14px; font-size: 11px;">🍿 Order Paired Food →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TICKET BOOKING MODAL -->
+  <div id="ticketBookingModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.82); backdrop-filter: blur(5px); z-index: 220; align-items: center; justify-content: center; padding: 16px;">
+    <div class="w-full max-w-md rounded-2xl p-6 relative" style="background: #140407; border: 1.5px solid var(--gold-primary); box-shadow: 0 25px 60px rgba(0,0,0,0.95);">
+      <button onclick="closeTicketBookingModal()" class="absolute top-4 right-4 text-sm font-bold px-2.5 py-1 rounded" style="background: #26080e; color: #fff;">✕</button>
+      <span class="text-[10px] uppercase tracking-widest font-bold" style="color: var(--gold-primary);">VIP TICKET RESERVATION</span>
+      <h3 id="bookingMovieTitle" style="font-family: var(--font-display); font-size: 20px; color: #fff; margin-top: 2px;">Movie Title</h3>
+      <p id="bookingHallLabel" class="text-xs mb-4" style="color: var(--gold-light);">Hall 01</p>
+
+      <form onsubmit="confirmTicketReservation(event)" class="space-y-3">
+        <div>
+          <label class="text-[11px] block mb-1" style="color: var(--text-muted);">Guest Full Name</label>
+          <input id="bookingGuestName" type="text" required placeholder="e.g., Alexander" class="seat-select w-full">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-[11px] block mb-1" style="color: var(--text-muted);">Showtime</label>
+            <select id="bookingShowtime" class="seat-select w-full">
+              <option>05:30 PM</option>
+              <option selected>08:30 PM</option>
+              <option>11:30 PM (Midnight)</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-[11px] block mb-1" style="color: var(--text-muted);">VIP Recliner Bay</label>
+            <select id="bookingSeats" class="seat-select w-full">
+              <option>Row D • Seats 07–08</option>
+              <option selected>Row E • Seats E5, E6</option>
+              <option>Row F • Royal Loveseat 02</option>
+            </select>
+          </div>
+        </div>
+        <label class="flex items-center gap-2 text-xs pt-1 cursor-pointer" style="color: var(--gold-light);">
+          <input id="bookingAddFoodCheck" type="checkbox" checked>
+          Continue to Food &amp; Snacks paired for this movie after reserving
+        </label>
+        <button type="submit" class="gold-cta-btn w-full mt-2">Confirm VIP Seat Reservation</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- PHOTO LIGHTBOX MODAL -->
+  <div id="photoLightbox" onclick="closeLightbox()" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 230; align-items: center; justify-content: center; padding: 20px; flex-direction: column;">
+    <img id="lightboxImg" src="" alt="Fullscreen Gallery View" class="max-h-[80vh] max-w-[92vw] rounded-2xl" style="border: 1.5px solid var(--gold-primary);">
+    <p id="lightboxCaption" class="text-sm font-semibold mt-3" style="color: var(--gold-light);"></p>
+  </div>
+
+  <!-- LOUNGE TRAY DRAWER -->
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleTrayDrawer()"></div>
+  <aside class="slide-drawer" id="trayDrawer">
+    <div class="flex justify-between items-center pb-4 mb-4" style="border-bottom: 1px solid var(--border-burgundy);">
+      <div>
+        <h3 style="font-family: var(--font-display); font-size: 19px; color: var(--gold-primary);">🍿 LOUNGE TRAY</h3>
+        <span class="text-[11px]" style="color: var(--text-muted);">Silent In-Seat Butler Delivery</span>
+      </div>
+      <button onclick="toggleTrayDrawer()" class="px-2.5 py-1 rounded text-xs font-bold" style="background: #25080e; color: #fff;">✕</button>
+    </div>
+
+    <div id="trayItemsContainer" class="flex-1 space-y-2.5 overflow-y-auto pr-1"></div>
+
+    <div class="pt-4 mt-4" style="border-top: 1px solid var(--border-burgundy);">
+      <div class="flex justify-between items-center mb-3">
+        <span class="text-xs uppercase tracking-wider" style="color: var(--text-muted);">Subtotal</span>
+        <strong id="traySubtotal" style="font-family: var(--font-display); font-size: 18px; color: var(--gold-primary);">PKR 0</strong>
+      </div>
+      <button onclick="proceedToPaymentFromDrawer()" class="gold-cta-btn w-full">Proceed to Order &amp; Payment →</button>
+    </div>
+  </aside>
+
+  <div class="toast-banner" id="toastBanner"></div>
+  <script src="memb5script.js"></script>
+</body>
+</html>
