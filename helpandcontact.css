@@ -246,6 +246,13 @@ html {
   color: var(--gold-primary);
 }
 
+.copy-btn-copied,
+.copy-btn-copied:hover {
+  background-color: var(--gold-primary) !important;
+  color: var(--bg-obsidian) !important;
+  border-color: var(--gold-primary) !important;
+}
+
 /* Toast Entrance Animation */
 @keyframes toastSlideIn {
   from {

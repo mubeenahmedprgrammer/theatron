@@ -11,6 +11,7 @@
   const PREMIERES = [
     {
       id: 'dynasty-of-glass',
+      detailId: 'dynasty-glass',
       title: 'DYNASTY OF GLASS',
       genre: 'Drama',
       meta: 'English • 2h 35m • R',
@@ -28,6 +29,7 @@
     },
     {
       id: 'mirage-of-kings',
+      detailId: 'mirage-kings',
       title: 'MIRAGE OF KINGS',
       genre: 'Action',
       meta: 'Arabic • 2h 11m • PG-13',
@@ -45,6 +47,7 @@
     },
     {
       id: 'nocturne-in-vienna',
+      detailId: 'nocturne-obsidian',
       title: 'NOCTURNE IN VIENNA',
       genre: 'Thriller',
       meta: 'German • 2h 18m • R',
@@ -62,6 +65,7 @@
     },
     {
       id: 'the-obsidian-meridian',
+      detailId: 'ninth-monolith',
       title: 'THE OBSIDIAN MERIDIAN',
       genre: 'Sci-Fi',
       meta: 'English • 2h 44m • PG-13',
@@ -157,13 +161,13 @@
     }
 
     document.querySelectorAll('[data-nav]').forEach((link) => {
-      link.addEventListener('click', (e) => {
-        const target = link.getAttribute('data-nav');
-        if (target === 'Coming Soon' || target === 'About Us' || target === 'Help & Contact') {
-          return; // Allow real page navigation
+      link.addEventListener('click', () => {
+        if (drawer && !drawer.classList.contains('hidden')) {
+          drawer.classList.add('hidden');
+          mobileBtn?.setAttribute('aria-expanded', 'false');
+          iconOpen?.classList.remove('hidden');
+          iconClose?.classList.add('hidden');
         }
-        e.preventDefault();
-        showToast(`Navigating to ${target}`, 'Currently viewing Coming Soon — Early Ticket Alerts.');
       });
     });
   }
@@ -490,6 +494,7 @@
   }
 
   function openTeaserModal(film) {
+    const detailId = film.detailId || film.id;
     openModal(
       `4K TEASER REEL & SCREENING NOTES • ${film.genre.toUpperCase()}`,
       film.title,
@@ -515,9 +520,26 @@
             <p class="eyebrow">CURATORIAL SCREENING NOTES</p>
             <p class="mt-1.5 leading-relaxed text-[#9E9895]">${escapeHtml(film.screeningNotes)}</p>
           </div>
+
+          <div class="flex flex-wrap items-center justify-end gap-3 pt-2">
+            <button
+              id="moreDetailsModalBtn"
+              type="button"
+              data-more-details="${escapeHtml(detailId)}"
+              class="inline-flex items-center justify-center gap-2 rounded-xl bg-[#D4AF6A] px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-[#121011] transition hover:bg-[#e2c282]"
+            >
+              <span>More Details</span>
+              <span aria-hidden="true">&rarr;</span>
+            </button>
+          </div>
         </div>
       `
     );
+
+    const moreDetailsBtn = document.getElementById('moreDetailsModalBtn');
+    moreDetailsBtn?.addEventListener('click', () => {
+      window.location.href = `movie-details.html?id=${encodeURIComponent(detailId)}`;
+    });
   }
 
   function initModals() {
@@ -575,22 +597,6 @@
 
     document.getElementById('ticketsBtn')?.addEventListener('click', showTickets);
     document.getElementById('profileBtn')?.addEventListener('click', showProfile);
-
-    document.getElementById('adminPanelBtn')?.addEventListener('click', () => {
-      openModal(
-        'OPERATIONS & AUDITORIUM CONTROL',
-        'ADMIN CONTROL PANEL',
-        `
-          <p class="leading-relaxed">
-            Advance Box Office manifests and red-carpet ticket holds are available to authorized cinema staff.
-          </p>
-          <div class="mt-4 rounded-xl border border-[rgba(212,175,106,0.2)] bg-[#121011] p-4 text-xs">
-            <p class="text-[#F5F2EB]">Upcoming Premieres Queue • 4 Gala Titles Scheduled</p>
-            <p class="mt-1 text-[#D4AF6A]">VIP Gold Priority Alerts Enabled</p>
-          </div>
-        `
-      );
-    });
 
     document.querySelectorAll('[data-action]').forEach((btn) => {
       btn.addEventListener('click', () => {

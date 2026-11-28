@@ -167,32 +167,12 @@
     }
 
     document.querySelectorAll('[data-nav]').forEach((link) => {
-      link.addEventListener('click', (e) => {
-        const targetName = link.getAttribute('data-nav');
-        if (targetName === 'About Us' || targetName === 'Coming Soon') {
-          return; // Allow real page navigation
-        }
-        if (targetName !== 'Help & Contact') {
-          e.preventDefault();
-          showToast(`Navigating to ${targetName}`, 'Currently viewing Help & Contact — Customer Support & Box Office.');
-        }
-
-        // Update active visual highlight across desktop & mobile navs
-        document.querySelectorAll('[data-nav]').forEach((el) => {
-          const matches = el.getAttribute('data-nav') === targetName;
-          el.classList.toggle('nav-link-active', matches);
-          if (matches) {
-            el.setAttribute('aria-current', 'page');
-          } else {
-            el.removeAttribute('aria-current');
-          }
-        });
-
+      link.addEventListener('click', () => {
         if (drawer && !drawer.classList.contains('hidden')) {
           drawer.classList.add('hidden');
-          mobileBtn.setAttribute('aria-expanded', 'false');
-          iconOpen.classList.remove('hidden');
-          iconClose.classList.add('hidden');
+          mobileBtn?.setAttribute('aria-expanded', 'false');
+          iconOpen?.classList.remove('hidden');
+          iconClose?.classList.add('hidden');
         }
       });
     });
@@ -202,7 +182,9 @@
   // 2. Copy-to-Clipboard Support Channels
   // ------------------------------------------------------------------------
   async function copyText(text) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
+    if (!text) return false;
+
+    if (window.isSecureContext && navigator.clipboard && navigator.clipboard.writeText) {
       try {
         await navigator.clipboard.writeText(text);
         return true;
@@ -213,11 +195,22 @@
 
     const textarea = document.createElement('textarea');
     textarea.value = text;
-    textarea.setAttribute('readonly', '');
+    textarea.setAttribute('aria-hidden', 'true');
     textarea.style.position = 'fixed';
+    textarea.style.top = '0';
+    textarea.style.left = '0';
+    textarea.style.width = '1px';
+    textarea.style.height = '1px';
+    textarea.style.padding = '0';
+    textarea.style.border = 'none';
+    textarea.style.outline = 'none';
+    textarea.style.boxShadow = 'none';
+    textarea.style.background = 'transparent';
     textarea.style.opacity = '0';
     document.body.appendChild(textarea);
+    textarea.focus({ preventScroll: true });
     textarea.select();
+    textarea.setSelectionRange(0, text.length);
     let ok = false;
     try {
       ok = document.execCommand('copy');
@@ -229,28 +222,52 @@
   }
 
   function initCopyButtons() {
+    const triggerCopy = async (btn, valueToCopy, label) => {
+      const copied = await copyText(valueToCopy);
+      const labelSpan = btn?.querySelector('span');
+
+      if (copied) {
+        showToast('Copied to Clipboard', `${label}: ${valueToCopy}`);
+        if (btn && labelSpan) {
+          const originalText = btn.dataset.originalText || labelSpan.textContent;
+          btn.dataset.originalText = originalText;
+
+          if (btn._copyTimer) {
+            clearTimeout(btn._copyTimer);
+          }
+
+          labelSpan.textContent = 'Copied to Clipboard';
+          btn.classList.add('copy-btn-copied');
+          btn._copyTimer = setTimeout(() => {
+            labelSpan.textContent = originalText;
+            btn.classList.remove('copy-btn-copied');
+            btn._copyTimer = null;
+          }, 1800);
+        }
+      } else {
+        showToast('Copy Unavailable', `Please copy manually: ${valueToCopy}`);
+      }
+    };
+
     document.querySelectorAll('.copy-btn').forEach((btn) => {
       const labelSpan = btn.querySelector('span');
-      const originalText = labelSpan ? labelSpan.textContent : btn.textContent;
+      if (labelSpan) {
+        btn.dataset.originalText = labelSpan.textContent;
+      }
 
-      btn.addEventListener('click', async () => {
-        const valueToCopy = btn.getAttribute('data-copy') || '';
+      btn.addEventListener('click', () => {
+        const valueToCopy = (btn.getAttribute('data-copy') || '').trim();
         const label = btn.getAttribute('data-label') || 'Concierge contact';
-        const copied = await copyText(valueToCopy);
+        triggerCopy(btn, valueToCopy, label);
+      });
+    });
 
-        if (copied) {
-          showToast('Copied to Clipboard', `${label}: ${valueToCopy}`);
-          if (labelSpan) {
-            labelSpan.textContent = 'Copied to Clipboard';
-            btn.classList.add('bg-[#D4AF6A]', 'text-[#121011]', 'border-[#D4AF6A]');
-            setTimeout(() => {
-              labelSpan.textContent = originalText;
-              btn.classList.remove('bg-[#D4AF6A]', 'text-[#121011]', 'border-[#D4AF6A]');
-            }, 1800);
-          }
-        } else {
-          showToast('Copy Unavailable', `Please copy manually: ${valueToCopy}`);
-        }
+    document.querySelectorAll('.copy-email-text[data-copy]').forEach((el) => {
+      el.addEventListener('click', () => {
+        const valueToCopy = (el.getAttribute('data-copy') || el.textContent || '').trim();
+        const label = el.getAttribute('data-label') || 'Email address';
+        const cardBtn = el.parentElement?.querySelector('.copy-btn') || null;
+        triggerCopy(cardBtn, valueToCopy, label);
       });
     });
   }
@@ -613,22 +630,6 @@
 
     document.getElementById('ticketsBtn')?.addEventListener('click', showTicketsModal);
     document.getElementById('profileBtn')?.addEventListener('click', showProfileModal);
-
-    document.getElementById('adminPanelBtn')?.addEventListener('click', () => {
-      openModal(
-        'OPERATIONS & THEATER CONTROL',
-        'ADMIN CONTROL PANEL',
-        `
-          <p class="leading-relaxed">
-            Theater projector diagnostics, seating charts, and daily showtime controls are reserved for theater managers.
-          </p>
-          <div class="mt-4 rounded-xl border border-[rgba(212,175,106,0.2)] bg-[#121011] p-4 text-xs">
-            <p class="text-[#F5F2EB]">Manhattan Fifth Avenue • All 6 Luxury Theaters Ready</p>
-            <p class="mt-1 text-[#D4AF6A]">Screen &amp; Sound Status: 100% IMAX Laser / Dolby Atmos Online</p>
-          </div>
-        `
-      );
-    });
 
     document.querySelectorAll('[data-action]').forEach((btn) => {
       btn.addEventListener('click', () => {

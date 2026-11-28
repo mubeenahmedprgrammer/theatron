@@ -238,23 +238,13 @@
     }
 
     document.querySelectorAll('[data-nav]').forEach((link) => {
-      link.addEventListener('click', (e) => {
-        const targetName = link.getAttribute('data-nav');
-        if (targetName === 'Help & Contact' || targetName === 'About Us') {
-          return; // Allow real page navigation
+      link.addEventListener('click', () => {
+        if (drawer && !drawer.classList.contains('hidden')) {
+          drawer.classList.add('hidden');
+          mobileBtn?.setAttribute('aria-expanded', 'false');
+          iconOpen?.classList.remove('hidden');
+          iconClose?.classList.add('hidden');
         }
-        if (targetName === 'Cinemas') {
-          // Smooth scroll to global flagships section
-          if (drawer && !drawer.classList.contains('hidden')) {
-            drawer.classList.add('hidden');
-            mobileBtn.setAttribute('aria-expanded', 'false');
-            iconOpen.classList.remove('hidden');
-            iconClose.classList.add('hidden');
-          }
-          return;
-        }
-        e.preventDefault();
-        showToast(`Navigating to ${targetName}`, 'Currently viewing About Us — Our Story & Cinema Experience.');
       });
     });
   }
@@ -613,22 +603,6 @@
 
     document.getElementById('ticketsBtn')?.addEventListener('click', showTickets);
     document.getElementById('profileBtn')?.addEventListener('click', showProfile);
-
-    document.getElementById('adminPanelBtn')?.addEventListener('click', () => {
-      openModal(
-        'OPERATIONS & AUDITORIUM CONTROL',
-        'ADMIN CONTROL PANEL',
-        `
-          <p class="leading-relaxed">
-            Auditorium details and show schedules are available to cinema staff only.
-          </p>
-          <div class="mt-4 rounded-xl border border-[rgba(212,175,106,0.2)] bg-[#121011] p-4 text-xs">
-            <p class="text-[#F5F2EB]">All 4 Cinema Locations • Projection and Sound Systems Normal</p>
-            <p class="mt-1 text-[#D4AF6A]">Dual-Laser IMAX Calibration: 22.0 fL Verified</p>
-          </div>
-        `
-      );
-    });
 
     document.querySelectorAll('[data-action]').forEach((btn) => {
       btn.addEventListener('click', () => {
