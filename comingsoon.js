@@ -161,13 +161,13 @@
     }
 
     document.querySelectorAll('[data-nav]').forEach((link) => {
-      link.addEventListener('click', (e) => {
-        const target = link.getAttribute('data-nav');
-        if (target === 'Coming Soon' || target === 'About Us' || target === 'Help & Contact') {
-          return; // Allow real page navigation
+      link.addEventListener('click', () => {
+        if (drawer && !drawer.classList.contains('hidden')) {
+          drawer.classList.add('hidden');
+          mobileBtn?.setAttribute('aria-expanded', 'false');
+          iconOpen?.classList.remove('hidden');
+          iconClose?.classList.add('hidden');
         }
-        e.preventDefault();
-        showToast(`Navigating to ${target}`, 'Currently viewing Coming Soon — Early Ticket Alerts.');
       });
     });
   }
@@ -597,22 +597,6 @@
 
     document.getElementById('ticketsBtn')?.addEventListener('click', showTickets);
     document.getElementById('profileBtn')?.addEventListener('click', showProfile);
-
-    document.getElementById('adminPanelBtn')?.addEventListener('click', () => {
-      openModal(
-        'OPERATIONS & AUDITORIUM CONTROL',
-        'ADMIN CONTROL PANEL',
-        `
-          <p class="leading-relaxed">
-            Advance Box Office manifests and red-carpet ticket holds are available to authorized cinema staff.
-          </p>
-          <div class="mt-4 rounded-xl border border-[rgba(212,175,106,0.2)] bg-[#121011] p-4 text-xs">
-            <p class="text-[#F5F2EB]">Upcoming Premieres Queue • 4 Gala Titles Scheduled</p>
-            <p class="mt-1 text-[#D4AF6A]">VIP Gold Priority Alerts Enabled</p>
-          </div>
-        `
-      );
-    });
 
     document.querySelectorAll('[data-action]').forEach((btn) => {
       btn.addEventListener('click', () => {

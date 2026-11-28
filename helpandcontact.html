@@ -56,7 +56,7 @@
   <header class="sticky top-0 z-40 border-b border-[rgba(212,175,106,0.14)] bg-[#121011]/90 backdrop-blur-xl">
     <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
       <!-- Left: Brand Emblem & Wordmark -->
-      <a href="#top" class="group flex items-center gap-3.5 focus:outline-none">
+      <a href="index.html" class="group flex items-center gap-3.5 focus:outline-none">
         <div
           class="flex h-10 w-10 items-center justify-center rounded-xl border border-[#8A2B3B] bg-[#5A1E28] shadow-[0_0_24px_rgba(90,30,40,0.45)] transition-transform duration-300 group-hover:scale-105"
         >
@@ -74,20 +74,11 @@
 
       <!-- Center: Desktop Navigation Links -->
       <nav aria-label="Primary Navigation" class="hidden items-center gap-1 lg:flex">
-        <a href="#home" data-nav="Home" class="nav-link">Home</a>
-        <a href="#movies" data-nav="Movies" class="nav-link">Movies</a>
+        <a href="index.html" data-nav="Home" class="nav-link">Home</a>
+        <a href="movies.html" data-nav="Movies" class="nav-link">Movies</a>
         <a href="comingsoon.html" data-nav="Coming Soon" class="nav-link">Coming Soon</a>
-        <a href="#cinemas" data-nav="Cinemas" class="nav-link">Cinemas</a>
-        <a href="#showtimes" data-nav="Showtimes" class="nav-link">Showtimes</a>
-        <a href="aboutus.html" data-nav="About Us" class="nav-link">About Us</a>
-        <a
-          href="#help-contact"
-          data-nav="Help & Contact"
-          aria-current="page"
-          class="nav-link nav-link-active"
-        >
-          Help &amp; Contact
-        </a>
+        <a href="cinemas.html" data-nav="Cinemas" class="nav-link">Cinemas</a>
+        <a href="cinema.html#repertoire" data-nav="Showtimes" class="nav-link">Showtimes</a>
       </nav>
 
       <!-- Right: User Controls -->
@@ -153,15 +144,11 @@
     <!-- Mobile Navigation Drawer -->
     <div id="mobileNavDrawer" class="hidden border-t border-[rgba(212,175,106,0.14)] bg-[#141112] px-4 py-4 lg:hidden">
       <nav aria-label="Mobile Navigation" class="grid grid-cols-2 gap-2">
-        <a href="#home" data-nav="Home" class="nav-link justify-center">Home</a>
-        <a href="#movies" data-nav="Movies" class="nav-link justify-center">Movies</a>
+        <a href="cinema.html" data-nav="Home" class="nav-link justify-center">Home</a>
+        <a href="movies.html" data-nav="Movies" class="nav-link justify-center">Movies</a>
         <a href="comingsoon.html" data-nav="Coming Soon" class="nav-link justify-center">Coming Soon</a>
-        <a href="#cinemas" data-nav="Cinemas" class="nav-link justify-center">Cinemas</a>
-        <a href="#showtimes" data-nav="Showtimes" class="nav-link justify-center">Showtimes</a>
-        <a href="aboutus.html" data-nav="About Us" class="nav-link justify-center">About Us</a>
-        <a href="#help-contact" data-nav="Help & Contact" class="nav-link nav-link-active col-span-2 justify-center">
-          Help &amp; Contact
-        </a>
+        <a href="cinemas.html" data-nav="Cinemas" class="nav-link justify-center">Cinemas</a>
+        <a href="cinema.html#repertoire" data-nav="Showtimes" class="nav-link col-span-2 justify-center">Showtimes</a>
       </nav>
     </div>
   </header>
@@ -660,7 +647,7 @@
       <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-12">
         <!-- Col 1: Brand & Architectural Badges -->
         <div class="lg:col-span-4">
-          <a href="#top" class="inline-flex items-center gap-3">
+          <a href="cinema.html" class="inline-flex items-center gap-3">
             <span class="flex h-9 w-9 items-center justify-center rounded-xl border border-[#8A2B3B] bg-[#5A1E28]">
               <span class="font-serif text-lg font-semibold text-[#D4AF6A]">T</span>
             </span>
@@ -685,11 +672,13 @@
         <div class="lg:col-span-2">
           <h3 class="eyebrow">EXPLORE CINEMA</h3>
           <ul class="mt-4 space-y-2.5 text-xs">
-            <li><a href="#movies" class="footer-link">Now Playing</a></li>
+            <li><a href="movies.html" class="footer-link">Now Playing</a></li>
             <li><a href="comingsoon.html" class="footer-link">Upcoming Premieres</a></li>
-            <li><a href="aboutus.html#global-flagships" class="footer-link">Cinema Locations</a></li>
-            <li><a href="#showtimes" class="footer-link">Showtimes &amp; Formats</a></li>
-            <li><a href="#faq" class="footer-link">In-Seat Food &amp; Drinks</a></li>
+            <li><a href="cinemas.html" class="footer-link">Cinema Locations</a></li>
+            <li><a href="cinema.html#repertoire" class="footer-link">Showtimes &amp; Formats</a></li>
+            <li><a href="food-snacks.html" class="footer-link">In-Seat Food &amp; Drinks</a></li>
+            <li><a href="aboutus.html" class="footer-link">About Us</a></li>
+            <li><a href="helpandcontact.html" class="footer-link text-[#D4AF6A]">Help &amp; Contact</a></li>
           </ul>
         </div>
 
@@ -697,9 +686,9 @@
         <div class="lg:col-span-3">
           <h3 class="eyebrow">MEMBER SERVICES</h3>
           <ul class="mt-4 space-y-2.5 text-xs">
-            <li><button type="button" data-action="profile" class="footer-link text-left">VIP Gold Membership Profile</button></li>
-            <li><button type="button" data-action="tickets" class="footer-link text-left">My Tickets</button></li>
-            <li><button type="button" data-action="signin" class="footer-link text-left">Member Sign In</button></li>
+            <li><a href="profile.html" class="footer-link">VIP Gold Membership Profile</a></li>
+            <li><a href="my-bookings.html" class="footer-link">My Tickets</a></li>
+            <li><a href="login.html" class="footer-link">Member Sign In</a></li>
             <li><button type="button" data-action="apply" class="footer-link text-left">Apply for Membership</button></li>
           </ul>
         </div>
@@ -713,14 +702,14 @@
           <p class="mt-2 font-mono text-sm font-bold tracking-wider text-[#F5F2EB]">
             +1 (800) 555-THEATRON
           </p>
-          <button
+          <a
             id="adminPanelBtn"
-            type="button"
+            href="admin/dashboard.html"
             class="mt-5 flex w-full items-center justify-center gap-2 rounded-xl border border-[#8A2B3B] bg-[#3D141B] px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#D4AF6A] transition hover:border-[#D4AF6A] hover:bg-[#5A1E28]"
           >
             <span>OPEN ADMIN CONTROL PANEL</span>
             <span aria-hidden="true">&rarr;</span>
-          </button>
+          </a>
         </div>
       </div>
 
