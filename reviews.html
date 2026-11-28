@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guest Reviews &amp; Jokes Corner | THEATRON Cinema Lounges</title>
+  <meta name="description" content="Read and submit verified guest reviews, press highlights, and enter jokes to win a free cinema ticket at THEATRON Islamabad.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <style>
+    :root {
+      --color-obsidian-bg: #090305;
+      --color-border: rgba(212, 175, 55, 0.22);
+      --color-gold: #d4af37;
+      --color-text-light: #e6dfd8;
+      --color-text-dim: #a89f97;
+    }
+
+    .reviews-hero-backdrop {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 25% 25%, rgba(158, 27, 50, 0.34), transparent 55%),
+        radial-gradient(circle at 78% 30%, rgba(212, 175, 55, 0.16), transparent 50%),
+        linear-gradient(180deg, #170409 0%, #0b0205 70%, #080204 100%);
+    }
+
+    .reviews-hero-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.32;
+    }
+
+    .page-subnav-bar {
+      background: rgba(14, 4, 8, 0.96);
+      border-top: 1px solid rgba(212, 175, 55, 0.16);
+      border-bottom: 1px solid rgba(212, 175, 55, 0.24);
+      padding: 10px 0;
+    }
+
+    .page-subnav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .page-subnav-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-gold);
+      font-weight: 700;
+    }
+
+    .page-subnav-links {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .page-subnav-link {
+      font-size: 0.84rem;
+      color: var(--color-text-light);
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      background: rgba(255, 255, 255, 0.03);
+      text-decoration: none;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .page-subnav-link:hover,
+    .page-subnav-link.active {
+      background: rgba(212, 175, 55, 0.16);
+      border-color: var(--color-gold);
+      color: #fff;
+    }
+
+    .rating-summary-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--color-border);
+      background: rgba(255, 255, 255, 0.025);
+      text-align: center;
+    }
+
+    .rating-stat-num {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: var(--color-gold);
+    }
+
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 36px;
+    }
+
+    .review-card {
+      padding: 22px;
+      border-radius: 12px;
+      border: 1px solid var(--color-border);
+      background: rgba(255, 255, 255, 0.025);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .review-submit-box {
+      padding: 24px;
+      border-radius: 14px;
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      background: rgba(255, 255, 255, 0.025);
+      margin-top: 16px;
+    }
+
+    .review-form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .review-form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .winner-banner {
+      padding: 18px 22px;
+      border-radius: 12px;
+      border: 1px solid rgba(212, 175, 55, 0.55);
+      background: linear-gradient(135deg, rgba(158, 27, 50, 0.28), rgba(212, 175, 55, 0.14));
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .joke-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr auto;
+      gap: 12px;
+      margin-bottom: 24px;
+      align-items: end;
+    }
+
+    @media (max-width: 768px) {
+      .joke-form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .jokes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .joke-card {
+      padding: 18px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--color-border);
+      background: rgba(255, 255, 255, 0.025);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .joke-card.leading-joke {
+      border-color: var(--color-gold);
+      box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.25);
+    }
+
+    .laugh-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(212, 175, 55, 0.45);
+      background: rgba(212, 175, 55, 0.12);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.18s ease;
+    }
+
+    .laugh-btn:hover {
+      background: rgba(212, 175, 55, 0.26);
+      transform: translateY(-1px);
+    }
+
+    .laugh-btn.laughed {
+      background: var(--color-gold);
+      color: #140509;
+      border-color: var(--color-gold);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= TOP UTILITY BAR ================= -->
+  <aside class="utility-bar" aria-label="Reviews & Jokes Announcements">
+    <div class="container utility-bar-inner">
+      <div class="utility-left">
+        <span class="utility-item">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          <strong>Free Ticket Challenge:</strong> Most laughs wins a complimentary movie ticket!
+        </span>
+        <span class="utility-item">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+          Guest Reviews &amp; Live Laugh Voting Open
+        </span>
+      </div>
+      <div class="utility-right">
+        <span class="utility-item">
+          <span class="status-dot"></span>
+          <span>F-7 Markaz Lounge • Guest Community</span>
+        </span>
+        <span class="utility-item">
+          <span class="badge badge-gold">4.9 ★ GUEST RATING</span>
+        </span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= STICKY NAVBAR (3 MAIN PAGES) ================= -->
+  <header class="main-header" id="mainHeader">
+    <div class="container navbar">
+      <a href="cinema.html" class="brand-logo" aria-label="THEATRON Homepage">
+        <div class="logo-crest">
+          <span>T</span>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">THEATRON</span>
+          <span class="brand-subtitle">CINEMA LOUNGES • ISLAMABAD</span>
+        </div>
+      </a>
+
+      <nav class="nav-menu" id="navMenu" aria-label="Main Pages">
+        <a href="cinema.html" class="nav-link" data-main-page="cinema">Cinema &amp; Repertoire</a>
+        <a href="food-snacks.html" class="nav-link" data-main-page="food">Food &amp; Snacks</a>
+        <a href="reviews.html" class="nav-link active" data-main-page="reviews">Guest Reviews</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="food-snacks.html" class="cart-toggle-btn" aria-label="Go to Food & Lounge Tray">
+          <span>Lounge Tray</span>
+          <span class="cart-badge" id="navTrayCount">0</span>
+        </a>
+        <a href="cinema.html#floorplan" class="btn btn-primary btn-sm">Reserve Seats</a>
+        <button type="button" class="nav-hamburger" id="navHamburger" aria-label="Toggle navigation">☰</button>
+      </div>
+    </div>
+
+    <!-- Sub-items shown directly underneath the active main page -->
+    <div class="page-subnav-bar" id="activePageSubnav" aria-label="Guest Reviews Contents">
+      <div class="container page-subnav-inner">
+        <span class="page-subnav-title">Inside Guest Reviews:</span>
+        <div class="page-subnav-links" id="subnavLinks">
+          <a href="#guestReviewsSection" class="page-subnav-link active">Guest Reviews</a>
+          <a href="#writeReviewBox" class="page-subnav-link">Write a Review</a>
+          <a href="#jokesCorner" class="page-subnav-link">Jokes &amp; Laughs</a>
+          <a href="#jokesCorner" class="page-subnav-link">Free Ticket Leader</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ================= HERO BANNER ================= -->
+    <section class="hero-section" style="min-height: 50vh; padding-top: 112px; padding-bottom: 48px;">
+      <div class="reviews-hero-backdrop">
+        <img class="reviews-hero-photo" src="images/gallery-royal-salon.jpg" alt="THEATRON lounge guests" onerror="this.style.display='none'">
+        <div class="hero-overlay"></div>
+      </div>
+
+      <div class="container hero-content">
+        <div class="hero-tag">
+          <span class="tag-spark">✦</span>
+          VERIFIED GUEST REVIEWS • JOKES &amp; LAUGHS LEADERBOARD
+          <span class="tag-spark">✦</span>
+        </div>
+
+        <h1 class="hero-title" style="font-size: clamp(2.2rem, 4.5vw, 3.5rem);">
+          Guest Reviews &amp; <span>Laughs Challenge</span>
+        </h1>
+
+        <p class="hero-lead">
+          Read and post reviews of our auditoriums, recliners, and dining—and drop your best joke below. Whoever collects the most laughs wins a free ticket!
+        </p>
+
+        <div class="hero-actions" style="margin-bottom: 0;">
+          <a href="#writeReviewBox" class="btn btn-gold"><span>Write a Review</span></a>
+          <a href="#jokesCorner" class="btn btn-outline"><span>Enter a Joke &amp; Vote</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= GUEST REVIEWS & SUBMIT REVIEW SECTION ================= -->
+    <section class="section-padding" id="guestReviewsSection" style="background: var(--color-obsidian-bg);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Verified Lounge Notes</span>
+          <h2 class="section-title">Guest Reviews &amp; Press Impressions</h2>
+          <p class="section-subtitle">Real feedback from screenings in Hall 01 IMAX, Hall 02 Atmos, and Hall 03 Royal Salon.</p>
+        </div>
+
+        <!-- Rating Summary Bar -->
+        <div class="rating-summary-strip">
+          <div>
+            <div class="rating-stat-num">4.9 / 5.0</div>
+            <div class="text-muted" style="font-size:0.85rem;">Overall Lounge Rating</div>
+          </div>
+          <div>
+            <div class="rating-stat-num">98%</div>
+            <div class="text-muted" style="font-size:0.85rem;">Butler On-Time Delivery</div>
+          </div>
+          <div>
+            <div class="rating-stat-num" id="totalReviewsCount">6</div>
+            <div class="text-muted" style="font-size:0.85rem;">Published Guest Reviews</div>
+          </div>
+          <div>
+            <div class="rating-stat-num">F-7 Markaz</div>
+            <div class="text-muted" style="font-size:0.85rem;">Islamabad Flagship</div>
+          </div>
+        </div>
+
+        <!-- Filter Reviews by Hall / Experience -->
+        <div class="genre-filter-wrapper" id="reviewCategoryFilters" style="margin-bottom: 24px;">
+          <button type="button" class="genre-filter-btn active" data-revcat="all">All Reviews</button>
+          <button type="button" class="genre-filter-btn" data-revcat="Hall 01 — IMAX">Hall 01 — IMAX</button>
+          <button type="button" class="genre-filter-btn" data-revcat="Hall 02 — Atmos">Hall 02 — Atmos</button>
+          <button type="button" class="genre-filter-btn" data-revcat="Hall 03 — Royal Salon">Hall 03 — Royal Salon</button>
+          <button type="button" class="genre-filter-btn" data-revcat="Food & Butler Service">Food &amp; Butler Service</button>
+        </div>
+
+        <!-- Dynamic Reviews Grid -->
+        <div class="reviews-grid" id="reviewsGridContainer"></div>
+
+        <!-- Write a Guest Review Form -->
+        <div class="review-submit-box" id="writeReviewBox">
+          <div style="margin-bottom: 16px;">
+            <span class="modal-tag">Share Your Experience</span>
+            <h3 style="margin: 4px 0 0; color: #fff; font-size: 1.35rem;">Write a Guest Review</h3>
+          </div>
+
+          <form id="guestReviewForm">
+            <div class="review-form-row">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" for="reviewGuestName">Your Name</label>
+                <input type="text" class="form-input" id="reviewGuestName" placeholder="e.g. Hasnain Usman" required>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" for="reviewHallSelect">Hall / Experience</label>
+                <select class="form-select" id="reviewHallSelect">
+                  <option value="Hall 01 — IMAX">Hall 01 — IMAX</option>
+                  <option value="Hall 02 — Atmos">Hall 02 — Atmos</option>
+                  <option value="Hall 03 — Royal Salon">Hall 03 — Royal Salon</option>
+                  <option value="Food & Butler Service">Food &amp; Butler Service</option>
+                </select>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" for="reviewRatingSelect">Star Rating</label>
+                <select class="form-select" id="reviewRatingSelect">
+                  <option value="5">★★★★★ (5.0 — Outstanding)</option>
+                  <option value="4">★★★★☆ (4.0 — Great)</option>
+                  <option value="3">★★★☆☆ (3.0 — Good)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 14px;">
+              <label class="form-label" for="reviewCommentInput">Your Review</label>
+              <textarea class="form-input" id="reviewCommentInput" rows="3" placeholder="Tell other guests about the screen clarity, recliner comfort, sound, or food delivery..." required style="resize: vertical;"></textarea>
+            </div>
+
+            <div id="reviewFormFeedback" style="display: none; margin-bottom: 12px; padding: 10px 14px; border-radius: 8px; font-size: 0.86rem;"></div>
+
+            <button type="submit" class="btn btn-gold">
+              <span>Publish Guest Review</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= JOKES & LAUGHS FREE TICKET CORNER ================= -->
+    <section class="section-padding" id="jokesCorner">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Win a Free Ticket</span>
+          <h2 class="section-title">Jokes Corner — Most Laughs Wins a Free Ticket</h2>
+          <p class="section-subtitle">
+            Submit your joke and tap <strong>Laugh 😂</strong> (1 laugh per joke). Top laugh count leads for the free movie ticket!
+          </p>
+        </div>
+
+        <!-- Current Free Ticket Leader Banner -->
+        <div class="winner-banner" id="freeTicketLeaderBanner">
+          <div>
+            <div style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--color-gold);font-weight:700;">
+              🎟️ Current Free Ticket Leader
+            </div>
+            <div id="leaderText" style="font-size:1.1rem;color:#fff;font-weight:700;margin-top:4px;">
+              Loading leader...
+            </div>
+          </div>
+          <span class="badge badge-gold" id="leaderLaughsBadge">0 Laughs</span>
+        </div>
+
+        <!-- Enter Joke Form -->
+        <form class="joke-form-grid" id="jokeEntryForm">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="jokeAuthorInput">Your Name</label>
+            <input type="text" class="form-input" id="jokeAuthorInput" placeholder="e.g. Hasnain" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" for="jokeTextInput">Enter Your Joke</label>
+            <input type="text" class="form-input" id="jokeTextInput" placeholder="Type a clean cinema or funny joke and press Enter Joke..." required>
+          </div>
+
+          <button type="submit" class="btn btn-gold" id="enterJokeBtn" style="height:44px;">
+            <span>Enter Joke</span>
+          </button>
+        </form>
+
+        <div id="jokeFormFeedback" style="display:none;margin-bottom:16px;padding:10px 14px;border-radius:8px;font-size:0.86rem;"></div>
+
+        <!-- Jokes List with Laugh Buttons -->
+        <div class="jokes-list" id="jokesListContainer"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="brand-logo" style="margin-bottom: 18px;">
+            <div class="logo-crest" style="width: 38px; height: 38px;">
+              <span style="font-size: 1.2rem;">T</span>
+            </div>
+            <div class="brand-text">
+              <span class="brand-name" style="font-size: 1.2rem;">THEATRON</span>
+              <span class="brand-subtitle">CINEMA LOUNGES</span>
+            </div>
+          </div>
+          <p>Islamabad's luxury cinema lounge at F-7 Markaz with calibrated projection, recliners, and butler dining.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Cinema &amp; Repertoire</h4>
+          <div class="footer-links">
+            <a href="cinema.html#repertoire">All-Genre Repertoire</a>
+            <a href="cinema.html#auditoriums">The Three Lounges</a>
+            <a href="cinema.html#gallery">Architecture Showcase</a>
+            <a href="cinema.html#floorplan">Interactive Floor Plan</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Food &amp; Snacks</h4>
+          <div class="footer-links">
+            <a href="food-snacks.html#concessionsMenu">Snacks, Burgers, Pizza &amp; Sweets</a>
+            <a href="food-snacks.html#combos">Royal Screening Combos</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Guest Reviews &amp; Concierge</h4>
+          <div class="footer-links">
+            <a href="reviews.html#guestReviewsSection">Guest Reviews</a>
+            <a href="reviews.html#writeReviewBox">Write a Guest Review</a>
+            <a href="reviews.html#jokesCorner">Jokes &amp; Free Ticket Laughs</a>
+          </div>
+          <p style="margin-top: 10px;">Plot 14-B, Street 14, F-7 Markaz, Islamabad</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 THEATRON Cinema Lounges. All Rights Reserved.</div>
+        <div><a href="cinema.html" style="color: var(--color-text-dim);">Cinema &amp; Repertoire</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="theatron-app.js"></script>
+</body>
+</html>

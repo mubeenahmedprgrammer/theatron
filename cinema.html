@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cinema &amp; Repertoire | THEATRON Cinema Lounges</title>
+  <meta name="description" content="Explore screenings, movie genres, auditorium specs, floor plan, seat booking, architecture gallery, and FAQ at THEATRON Cinema Lounges in Islamabad.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <style>
+    :root {
+      --color-obsidian-bg: #090305;
+      --color-border: rgba(212, 175, 55, 0.22);
+      --color-gold: #d4af37;
+      --color-text-light: #e6dfd8;
+      --color-text-dim: #a89f97;
+    }
+
+    .cinema-hero-backdrop {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 25% 25%, rgba(158, 27, 50, 0.34), transparent 55%),
+        radial-gradient(circle at 78% 30%, rgba(212, 175, 55, 0.16), transparent 50%),
+        linear-gradient(180deg, #170409 0%, #0b0205 70%, #080204 100%);
+    }
+
+    .cinema-hero-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.34;
+    }
+
+    .page-subnav-bar {
+      background: rgba(14, 4, 8, 0.96);
+      border-top: 1px solid rgba(212, 175, 55, 0.16);
+      border-bottom: 1px solid rgba(212, 175, 55, 0.24);
+      padding: 10px 0;
+    }
+
+    .page-subnav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .page-subnav-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-gold);
+      font-weight: 700;
+    }
+
+    .page-subnav-links {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .page-subnav-link {
+      font-size: 0.84rem;
+      color: var(--color-text-light);
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      background: rgba(255, 255, 255, 0.03);
+      text-decoration: none;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .page-subnav-link:hover,
+    .page-subnav-link.active {
+      background: rgba(212, 175, 55, 0.16);
+      border-color: var(--color-gold);
+      color: #fff;
+    }
+
+    .hall-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 24px;
+    }
+
+    .hall-specs-list {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0 0;
+      font-size: 0.85rem;
+      color: var(--color-text-dim);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .hall-specs-list strong {
+      color: var(--color-gold);
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+    }
+
+    .gallery-tile {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--color-border);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .gallery-tile img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-caption {
+      padding: 12px 14px;
+      font-size: 0.9rem;
+      color: var(--color-text-light);
+      font-weight: 600;
+    }
+
+    .seat-map-box {
+      padding: 24px;
+      border-radius: 14px;
+      border: 1px solid var(--color-border);
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .screen-arc {
+      text-align: center;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      background: rgba(212, 175, 55, 0.14);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      color: var(--color-gold);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      font-size: 0.82rem;
+    }
+
+    .seat-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .seat-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .seat-btn {
+      min-width: 44px;
+      padding: 7px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--color-text-light);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .seat-btn.selected {
+      background: var(--color-gold);
+      color: #140509;
+      font-weight: 700;
+      border-color: var(--color-gold);
+    }
+
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .faq-item {
+      padding: 18px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--color-border);
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .faq-item summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    .faq-item p {
+      margin: 10px 0 0;
+      color: var(--color-text-dim);
+      font-size: 0.92rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= TOP UTILITY BAR ================= -->
+  <aside class="utility-bar" aria-label="Cinema Announcements">
+    <div class="container utility-bar-inner">
+      <div class="utility-left">
+        <span class="utility-item">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          <strong>Flagship Lounge:</strong> F-7 Markaz, Islamabad
+        </span>
+        <span class="utility-item">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+          Daily Screenings: 12:30 PM – 02:00 AM
+        </span>
+      </div>
+      <div class="utility-right">
+        <span class="utility-item">
+          <span class="status-dot"></span>
+          <span>Laser Projection &amp; Butler Service Active</span>
+        </span>
+        <span class="utility-item">
+          <span class="badge badge-gold">PKR • RECLINER LOUNGES</span>
+        </span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= STICKY NAVBAR (3 MAIN PAGES) ================= -->
+  <header class="main-header" id="mainHeader">
+    <div class="container navbar">
+      <a href="cinema.html" class="brand-logo" aria-label="THEATRON Homepage">
+        <div class="logo-crest">
+          <span>T</span>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">THEATRON</span>
+          <span class="brand-subtitle">CINEMA LOUNGES • ISLAMABAD</span>
+        </div>
+      </a>
+
+      <nav class="nav-menu" id="navMenu" aria-label="Main Pages">
+        <a href="cinema.html" class="nav-link active" data-main-page="cinema">Cinema &amp; Repertoire</a>
+        <a href="food-snacks.html" class="nav-link" data-main-page="food">Food &amp; Snacks</a>
+        <a href="reviews.html" class="nav-link" data-main-page="reviews">Guest Reviews</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="food-snacks.html" class="cart-toggle-btn" aria-label="Go to Food & Lounge Tray">
+          <span>Lounge Tray</span>
+          <span class="cart-badge" id="navTrayCount">0</span>
+        </a>
+        <a href="#floorplan" class="btn btn-primary btn-sm">Reserve Seats</a>
+        <button type="button" class="nav-hamburger" id="navHamburger" aria-label="Toggle navigation">☰</button>
+      </div>
+    </div>
+
+    <!-- Sub-items shown directly underneath the active main page -->
+    <div class="page-subnav-bar" id="activePageSubnav" aria-label="Cinema & Repertoire Contents">
+      <div class="container page-subnav-inner">
+        <span class="page-subnav-title">Inside Cinema &amp; Repertoire:</span>
+        <div class="page-subnav-links" id="subnavLinks">
+          <a href="#repertoire" class="page-subnav-link active">All-Genre Repertoire</a>
+          <a href="#auditoriums" class="page-subnav-link">The Three Lounges</a>
+          <a href="#gallery" class="page-subnav-link">Architecture Showcase</a>
+          <a href="#floorplan" class="page-subnav-link">Interactive Floor Plan</a>
+          <a href="#faq" class="page-subnav-link">Policies &amp; FAQ</a>
+          <a href="food-snacks.html" class="page-subnav-link">Order Food to Seat</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ================= HERO BANNER ================= -->
+    <section class="hero-section" style="min-height: 56vh; padding-top: 112px; padding-bottom: 52px;">
+      <div class="cinema-hero-backdrop">
+        <img class="cinema-hero-photo" src="images/gallery-imax.jpg" alt="THEATRON cinema auditorium" onerror="this.style.display='none'">
+        <div class="hero-overlay"></div>
+      </div>
+
+      <div class="container hero-content">
+        <div class="hero-tag">
+          <span class="tag-spark">✦</span>
+          DUAL-LASER PROJECTION • LUXURY RECLINERS
+          <span class="tag-spark">✦</span>
+        </div>
+
+        <h1 class="hero-title" style="font-size: clamp(2.2rem, 4.5vw, 3.6rem);">
+          Cinema Lounges &amp; <span>Curated Repertoire</span>
+        </h1>
+
+        <p class="hero-lead">
+          Experience calibrated cinema halls, full-grain leather power recliners, spatial audio, and direct seat-to-kitchen butler service in Islamabad.
+        </p>
+
+        <div class="hero-actions" style="margin-bottom: 0;">
+          <a href="#repertoire" class="btn btn-gold"><span>Browse Screenings</span></a>
+          <a href="#floorplan" class="btn btn-outline"><span>Pick Recliner Seats</span></a>
+          <a href="food-snacks.html" class="btn btn-primary"><span>Food &amp; Snacks</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= REPERTOIRE SHOWTIMES & GENRE FILTER ================= -->
+    <section class="section-padding" id="repertoire" style="background: var(--color-obsidian-bg);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Now Showing</span>
+          <h2 class="section-title">All-Genre Repertoire</h2>
+          <p class="section-subtitle">Filter screenings by genre, pick your showtime, or jump straight to the seat map.</p>
+        </div>
+
+        <div class="genre-filter-wrapper" id="cinemaGenreFilters" style="margin-bottom: 28px;">
+          <button type="button" class="genre-filter-btn active" data-showgenre="all">All Screenings</button>
+          <button type="button" class="genre-filter-btn" data-showgenre="action">Action &amp; IMAX</button>
+          <button type="button" class="genre-filter-btn" data-showgenre="thriller">Midnight &amp; Thriller</button>
+          <button type="button" class="genre-filter-btn" data-showgenre="romance">Drama &amp; Romance</button>
+          <button type="button" class="genre-filter-btn" data-showgenre="comedy">Comedy &amp; Family</button>
+        </div>
+
+        <div class="movies-grid" id="showsGrid"></div>
+      </div>
+    </section>
+
+    <!-- ================= THREE AUDITORIUMS & SPECS ================= -->
+    <section class="section-padding" id="auditoriums">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Signature Spaces</span>
+          <h2 class="section-title">The Three Lounges &amp; Technical Specs</h2>
+          <p class="section-subtitle">Every hall is acoustically isolated with motorized recliners and call-button butler service.</p>
+        </div>
+
+        <div class="hall-card-grid">
+          <article class="movie-card">
+            <div class="movie-poster-wrap" style="aspect-ratio:16/10;">
+              <img src="images/auditorium-hall01_3.jpg" alt="Hall 01 — Grand Laser Lounge" onerror="this.closest('.movie-card').style.display='none'">
+              <div class="movie-poster-overlay"></div>
+              <span class="movie-format-pill badge badge-gold">Hall 01 • IMAX</span>
+            </div>
+            <div class="movie-card-body">
+              <h3 class="movie-title">Grand Laser Lounge</h3>
+              <p class="movie-desc">Wide-format projection with tiered crimson recliners, footrests, and full butler tray service.</p>
+              <ul class="hall-specs-list">
+                <li><strong>Projection:</strong> Dual 4K Laser Calibrated</li>
+                <li><strong>Seating:</strong> 110 Motorized Crimson Recliners</li>
+                <li><strong>Dining:</strong> In-Seat Butler &amp; Intermission Tray</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="movie-card">
+            <div class="movie-poster-wrap" style="aspect-ratio:16/10;">
+              <img src="images/auditorium-hall02_3.jpg" alt="Hall 02 — Atmos Screening Hall" onerror="this.closest('.movie-card').style.display='none'">
+              <div class="movie-poster-overlay"></div>
+              <span class="movie-format-pill badge badge-crimson">Hall 02 • Atmos</span>
+            </div>
+            <div class="movie-card-body">
+              <h3 class="movie-title">Atmos Screening Hall</h3>
+              <p class="movie-desc">Acoustic-tuned auditorium with overhead &amp; surround channels designed for crisp dialogue and score.</p>
+              <ul class="hall-specs-list">
+                <li><strong>Audio:</strong> Multi-Channel Spatial Surround</li>
+                <li><strong>Seating:</strong> 88 Wide Lounge Recliners</li>
+                <li><strong>Dining:</strong> Express Recliner Tray Delivery</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="movie-card">
+            <div class="movie-poster-wrap" style="aspect-ratio:16/10;">
+              <img src="images/auditorium-hall03_3.jpg" alt="Hall 03 — Royal Velvet Salon" onerror="this.closest('.movie-card').style.display='none'">
+              <div class="movie-poster-overlay"></div>
+              <span class="movie-format-pill badge badge-gold">Hall 03 • Royal Salon</span>
+            </div>
+            <div class="movie-card-body">
+              <h3 class="movie-title">Royal Velvet Salon</h3>
+              <p class="movie-desc">Intimate lounge seating with warm architectural lighting, side tables, and priority service.</p>
+              <ul class="hall-specs-list">
+                <li><strong>Atmosphere:</strong> Warm Velvet &amp; Brass Accent</li>
+                <li><strong>Seating:</strong> 54 Premier Recliner Loungers</li>
+                <li><strong>Dining:</strong> Dedicated Butler Concierge</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ARCHITECTURE & LOUNGE GALLERY ================= -->
+    <section class="section-padding" id="gallery" style="background: var(--color-obsidian-bg);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Inside THEATRON</span>
+          <h2 class="section-title">Architecture Showcase</h2>
+          <p class="section-subtitle">A closer look at our auditorium geometry, recliner aisles, and lounge spaces.</p>
+        </div>
+
+        <div class="gallery-grid">
+          <div class="gallery-tile">
+            <img src="images/gallery-imax.jpg" alt="IMAX auditorium seating" onerror="this.closest('.gallery-tile').style.display='none'">
+            <div class="gallery-caption">Tiered IMAX Auditorium</div>
+          </div>
+          <div class="gallery-tile">
+            <img src="images/gallery-recliners.jpg" alt="Illuminated recliner rows" onerror="this.closest('.gallery-tile').style.display='none'">
+            <div class="gallery-caption">Illuminated Recliner Rows</div>
+          </div>
+          <div class="gallery-tile">
+            <img src="images/gallery-royal-salon.jpg" alt="Private royal screening salon" onerror="this.closest('.gallery-tile').style.display='none'">
+            <div class="gallery-caption">Private Royal Salon</div>
+          </div>
+          <div class="gallery-tile">
+            <img src="images/gallery-concession-bar.jpg" alt="Cinema screening hall with popcorn" onerror="this.closest('.gallery-tile').style.display='none'">
+            <div class="gallery-caption">Screening Hall &amp; Popcorn</div>
+          </div>
+          <div class="gallery-tile">
+            <img src="images/gallery-facade.jpg" alt="Main cinema screen view" onerror="this.closest('.gallery-tile').style.display='none'">
+            <div class="gallery-caption">Main Screen Perspective</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= INTERACTIVE FLOOR PLAN & SEAT RESERVATION ================= -->
+    <section class="section-padding" id="floorplan">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Seat Selection &amp; Reservation</span>
+          <h2 class="section-title">Interactive Floor Plan</h2>
+          <p class="section-subtitle">Click recliner seats to select or unselect, confirm your booking, or head to Food &amp; Snacks.</p>
+        </div>
+
+        <div class="seat-map-box">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+            <div class="form-group" style="margin-bottom:0;min-width:220px;">
+              <label class="form-label" for="floorHallSelect">Select Hall</label>
+              <select class="form-select" id="floorHallSelect">
+                <option value="Hall 01 — Grand Laser Lounge">Hall 01 — Grand Laser Lounge</option>
+                <option value="Hall 02 — Atmos Screening Hall">Hall 02 — Atmos Screening Hall</option>
+                <option value="Hall 03 — Royal Velvet Salon">Hall 03 — Royal Velvet Salon</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:0;min-width:200px;">
+              <label class="form-label" for="floorGuestInput">Guest Name</label>
+              <input type="text" class="form-input" id="floorGuestInput" placeholder="e.g. Hasnain" value="Guest">
+            </div>
+          </div>
+
+          <div class="screen-arc">CINEMA SCREEN — CALIBRATED LASER PROJECTION</div>
+          <div class="seat-rows" id="seatMapRows"></div>
+
+          <div id="seatBookingAlert" style="display:none;margin-bottom:14px;padding:10px 14px;border-radius:8px;font-size:0.86rem;"></div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-top:1px solid var(--color-border);padding-top:16px;">
+            <div>
+              <strong>Selected Seats:</strong> <span id="selectedSeatsLabel" style="color:var(--color-gold);">None</span>
+              <span style="margin-left:14px;"><strong>Ticket Total:</strong> <span id="seatTotalLabel" style="color:#fff;">PKR 0</span></span>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button type="button" class="btn btn-outline btn-sm" id="clearSeatsBtn">Clear Seats</button>
+              <button type="button" class="btn btn-primary btn-sm" id="confirmSeatHoldBtn">Hold Seats</button>
+              <a href="food-snacks.html" class="btn btn-gold btn-sm">Order Snacks to Seat</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= POLICIES & FAQ ================= -->
+    <section class="section-padding" id="faq" style="background: var(--color-obsidian-bg);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Guest Guide</span>
+          <h2 class="section-title">Policies &amp; Frequently Asked Questions</h2>
+        </div>
+
+        <div class="faq-list">
+          <details class="faq-item" open>
+            <summary>How does In-Seat Butler food delivery work?</summary>
+            <p>Add snacks, burgers, pizza, sweets, or combos to your Lounge Tray on the Food &amp; Snacks page, enter your hall and seat/recliner reference, complete payment, and our lounge team delivers directly to your row.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Can I switch between main pages and jump straight to sections?</summary>
+            <p>Yes. Use the three main links in the top bar (Cinema &amp; Repertoire, Food &amp; Snacks, Guest Reviews) and the sub-navigation strip right beneath them to jump to any section.</p>
+          </details>
+          <details class="faq-item">
+            <summary>How do I join the Free Ticket Jokes &amp; Laughs contest?</summary>
+            <p>Visit Guest Reviews, scroll to Jokes Corner, submit your joke, and tap Laugh 😂 (1 laugh per joke) on entries you enjoy. The highest laugh total leads for the free movie ticket.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="brand-logo" style="margin-bottom: 18px;">
+            <div class="logo-crest" style="width: 38px; height: 38px;">
+              <span style="font-size: 1.2rem;">T</span>
+            </div>
+            <div class="brand-text">
+              <span class="brand-name" style="font-size: 1.2rem;">THEATRON</span>
+              <span class="brand-subtitle">CINEMA LOUNGES</span>
+            </div>
+          </div>
+          <p>Islamabad's luxury cinema lounge at F-7 Markaz with calibrated projection, recliners, and butler dining.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Cinema &amp; Repertoire</h4>
+          <div class="footer-links">
+            <a href="cinema.html#repertoire">All-Genre Repertoire</a>
+            <a href="cinema.html#auditoriums">The Three Lounges</a>
+            <a href="cinema.html#gallery">Architecture Showcase</a>
+            <a href="cinema.html#floorplan">Interactive Floor Plan</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Food &amp; Snacks</h4>
+          <div class="footer-links">
+            <a href="food-snacks.html#concessionsMenu">Snacks, Burgers, Pizza &amp; Sweets</a>
+            <a href="food-snacks.html#combos">Royal Screening Combos</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Guest Reviews &amp; Concierge</h4>
+          <div class="footer-links">
+            <a href="reviews.html#guestReviewsSection">Guest Reviews</a>
+            <a href="reviews.html#writeReviewBox">Write a Guest Review</a>
+            <a href="reviews.html#jokesCorner">Jokes &amp; Free Ticket Laughs</a>
+          </div>
+          <p style="margin-top: 10px;">Plot 14-B, Street 14, F-7 Markaz, Islamabad</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 THEATRON Cinema Lounges. All Rights Reserved.</div>
+        <div><a href="reviews.html" style="color: var(--color-text-dim);">Guest Reviews</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="theatron-app.js"></script>
+</body>
+</html>

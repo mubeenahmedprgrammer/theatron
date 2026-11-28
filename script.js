@@ -1,532 +1,565 @@
-const runway = document.querySelector('.hero-runway');
-const lcd = document.querySelector('#lcd-frame');
-const heroHead = document.querySelector('#hero-head');
-const trailerVideo = document.querySelector('#hero-trailer-video');
-const pauseToggle = document.querySelector('#trailer-play-btn');
-const muteToggle = document.querySelector('#trailer-mute-btn');
-if (runway && lcd && heroHead && trailerVideo && pauseToggle && muteToggle) {
-  let scrollQueued = false;
-  let manuallyPaused = false;
-  let pausedByScroll = false;
+/**
+ * THEATRON Cinema Lounges — Shared Navigation & UI Interactivity (Vanilla JS)
+ */
+(function () {
+  'use strict';
 
-  function syncPlaybackButton() {
-    pauseToggle.innerHTML = trailerVideo.paused ? '▶ <span>Play</span>' : '⏸ <span>Pause</span>';
+  const header = document.querySelector('.site-header');
+  const hamburgerBtn = document.getElementById('hamburger-btn');
+  const navMenu = document.getElementById('primary-nav-menu');
+  const mobileBreakpoint = 860;
+
+  if (header) {
+    const syncScrollState = () => {
+      header.classList.toggle('is-scrolled', window.scrollY > 16);
+    };
+    syncScrollState();
+    window.addEventListener('scroll', syncScrollState, { passive: true });
   }
 
-  function playTrailer() {
-    trailerVideo.play().catch(error => {
-      if (error.name === 'AbortError') return;
-      console.error('Unable to play the trailer.', error);
-      showToast('Trailer playback is unavailable');
-    });
-  }
+  if (hamburgerBtn && navMenu) {
+    const setMenuState = (isOpen) => {
+      hamburgerBtn.setAttribute('aria-expanded', String(isOpen));
+      navMenu.classList.toggle('is-open', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    };
 
-  function updateHeroProgress() {
-    const distance = runway.offsetHeight - window.innerHeight;
-    const scrollProgress = Math.max(0, Math.min(1, (window.scrollY - runway.offsetTop) / distance));
-    const scale = 1 - scrollProgress * 0.28;
-    const shift = scrollProgress * -60;
-    lcd.style.transform = `scale(${scale}) translateY(${shift}px)`;
-    lcd.style.opacity = String(1 - scrollProgress);
-    lcd.style.filter = `blur(${scrollProgress * 6}px)`;
-    heroHead.style.opacity = String(1 - scrollProgress * 0.82);
-    heroHead.style.transform = `translateY(${-scrollProgress * 24}px)`;
-    if (scrollProgress >= 0.85) {
-      if (!manuallyPaused) {
-        pausedByScroll = true;
-        if (!trailerVideo.paused) trailerVideo.pause();
+    const closeMenu = () => setMenuState(false);
+
+    // Keep mobile drawer aligned below the sticky header even if utility bar scrolls away.
+    const syncDrawerTop = () => {
+      if (!header || window.innerWidth > mobileBreakpoint) {
+        navMenu.style.top = '';
+        return;
       }
-    } else if (scrollProgress < 0.85 && pausedByScroll && !manuallyPaused) {
-      pausedByScroll = false;
-      playTrailer();
-    }
-    scrollQueued = false;
-  }
+      const rect = header.getBoundingClientRect();
+      navMenu.style.top = `${Math.max(0, Math.round(rect.bottom))}px`;
+    };
 
-  window.addEventListener('scroll', () => {
-    if (!scrollQueued) {
-      scrollQueued = true;
-      requestAnimationFrame(updateHeroProgress);
-    }
-  }, { passive: true });
-  updateHeroProgress();
-
-  trailerVideo.addEventListener('play', syncPlaybackButton);
-  trailerVideo.addEventListener('pause', syncPlaybackButton);
-  syncPlaybackButton();
-  pauseToggle.addEventListener('click', () => {
-    if (trailerVideo.paused) {
-      manuallyPaused = false;
-      pausedByScroll = false;
-      playTrailer();
-    } else {
-      manuallyPaused = true;
-      pausedByScroll = false;
-      trailerVideo.pause();
-    }
-  });
-  muteToggle.addEventListener('click', () => {
-    trailerVideo.muted = !trailerVideo.muted;
-    muteToggle.innerHTML = trailerVideo.muted ? '🔇 <span>Muted</span>' : '🔊 <span>Unmuted</span>';
-  });
-}
-
-const sitemap = document.querySelector('.sitemap');
-const sitemapTrigger = document.querySelector('.sitemap-trigger');
-if (sitemap && sitemapTrigger) {
-  sitemapTrigger.addEventListener('click', () => sitemap.classList.toggle('open'));
-  document.addEventListener('click', event => {
-    if (!sitemap.contains(event.target)) sitemap.classList.remove('open');
-  });
-}
-
-const searchInput = document.querySelector('#film-search');
-if (searchInput) {
-  searchInput.addEventListener('input', () => {
-    const term = searchInput.value.trim().toLowerCase();
-    document.querySelectorAll('.movie-card[data-search]').forEach(card => {
-      card.style.display = card.dataset.search.includes(term) ? '' : 'none';
+    hamburgerBtn.addEventListener('click', () => {
+      const isCurrentlyOpen = hamburgerBtn.getAttribute('aria-expanded') === 'true';
+      syncDrawerTop();
+      setMenuState(!isCurrentlyOpen);
     });
-  });
-  const findShowtimes = document.querySelector('#find-showtimes');
-  if (findShowtimes) {
-    findShowtimes.addEventListener('click', () => {
-      document.querySelector('#movies').scrollIntoView({ behavior: 'smooth' });
-      showToast('Showtimes updated for your selected lounge');
+
+    // Close menu when a navigation link or CTA inside the drawer is selected.
+    navMenu.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    // Close on Escape key for keyboard accessibility.
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && navMenu.classList.contains('is-open')) {
+        closeMenu();
+        hamburgerBtn.focus();
+      }
+    });
+
+    // Close when clicking outside the header/drawer.
+    document.addEventListener('click', (event) => {
+      if (!navMenu.classList.contains('is-open')) return;
+      if (header && !header.contains(event.target)) {
+        closeMenu();
+      }
+    });
+
+    // Reset menu when resizing above mobile breakpoint.
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > mobileBreakpoint && navMenu.classList.contains('is-open')) {
+        closeMenu();
+      } else {
+        syncDrawerTop();
+      }
     });
   }
-}
 
-const revealObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      revealObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.12 });
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+  // ------------------------------------------------------------------------
+  // All-Genre Curated Repertoire (index.html)
+  // ------------------------------------------------------------------------
+  const moviesData = [
+    {
+      id: 1,
+      title: 'Hasnain — Shadow Strike: Doomsday',
+      genre: 'Action',
+      duration: '2h 28m',
+      format: 'Dual-Laser IMAX • Atmos',
+      image: 'images/movie-1.jpg',
+      description:
+        'A high-stakes covert mission across frozen northern ridges where every second counts against an orbital countdown.',
+      showtimes: ['03:30 PM', '07:00 PM', '10:30 PM', '11:45 PM'],
+    },
+    {
+      id: 2,
+      title: 'Monsoon Letters in Murree',
+      genre: 'Love Story',
+      duration: '2h 04m',
+      format: 'Obsidian Lounge • 4K',
+      image: 'images/movie-2.jpg',
+      description:
+        'Two architects reunite in misty hillside cafés over an unfinished correspondence spanning a decade.',
+      showtimes: ['01:45 PM', '05:15 PM', '08:45 PM'],
+    },
+    {
+      id: 3,
+      title: 'The Seventh Velvet Seat',
+      genre: 'Horror',
+      duration: '1h 52m',
+      format: '64-Channel Atmos',
+      image: 'images/movie-3.jpg',
+      description:
+        'When a restored 1960s screening hall opens after midnight, its final reel refuses to end when the projector stops.',
+      showtimes: ['06:15 PM', '09:30 PM', '11:55 PM'],
+    },
+    {
+      id: 4,
+      title: 'Peaks of Silence: K2 Winter',
+      genre: 'Documentary',
+      duration: '1h 46m',
+      format: 'Dual-Laser IMAX',
+      image: 'images/movie-4.jpg',
+      description:
+        'Intimate 8K expedition cinematography chronicling high-altitude mountaineers and Balti porters above 8,000 meters.',
+      showtimes: ['12:30 PM', '04:00 PM', '07:30 PM'],
+    },
+    {
+      id: 5,
+      title: 'Obsidian Protocol',
+      genre: 'Action',
+      duration: '2h 14m',
+      format: 'Crimson Suite • Atmos',
+      image: 'images/movie-5.jpg',
+      description:
+        'An underground diplomat turns whistleblower in a breathless chase through glass towers and midnight rail tunnels.',
+      showtimes: ['02:30 PM', '06:00 PM', '09:45 PM'],
+    },
+    {
+      id: 6,
+      title: 'Saffron & Rain',
+      genre: 'Love Story',
+      duration: '1h 58m',
+      format: 'Italian Recliner Hall',
+      image: 'images/movie-6.jpg',
+      description:
+        'A classical cellist and a culinary historian find harmony in an old courtyard restaurant during autumn.',
+      showtimes: ['01:15 PM', '04:45 PM', '08:15 PM'],
+    },
+    {
+      id: 7,
+      title: 'Echoes Beneath Margalla',
+      genre: 'Horror',
+      duration: '1h 49m',
+      format: '64-Channel Atmos',
+      image: 'images/movie-7.jpg',
+      description:
+        'A night-shift acoustic surveyor captures subterranean frequencies that awaken an ancient hillside folklore.',
+      showtimes: ['07:45 PM', '10:15 PM', '11:50 PM'],
+    },
+    {
+      id: 8,
+      title: 'Crafted in Gold: Cinema Architecture',
+      genre: 'Documentary',
+      duration: '1h 34m',
+      format: '4K Laser Lounge',
+      image: 'images/movie-8.jpg',
+      description:
+        'A visual journey through the world’s grandest art-deco theaters, acoustic chambers, and bespoke projection rooms.',
+      showtimes: ['01:00 PM', '03:45 PM', '06:30 PM'],
+    },
+  ];
 
-document.addEventListener('click', event => {
-  if (!(event.target instanceof Element)) return;
-  const button = event.target.closest('.reminder');
-  if (!button) return;
-  const isSet = button.classList.toggle('set');
-  button.textContent = isSet ? '✓ Reminder Set' : 'Notify Me';
-  showToast(isSet ? 'Premiere reminder has been set' : 'Premiere reminder has been removed');
-});
+  const moviesGrid = document.getElementById('movies-grid');
+  const filterButtons = document.querySelectorAll('.filter-btn[data-genre]');
 
-const copyGoldButton = document.querySelector('#copy-gold');
-if (copyGoldButton) {
-  copyGoldButton.addEventListener('click', async () => {
-    try { await navigator.clipboard.writeText('GOLD15'); } catch (_) {}
-    showToast('GOLD15 copied — 15% lounge privilege unlocked');
-  });
-}
+  const renderMovies = (selectedGenre) => {
+    if (!moviesGrid) return;
 
-const modalBackdrop = document.querySelector('#modal-backdrop');
-const modalContent = document.querySelector('#modal-content');
+    const filtered =
+      selectedGenre === 'All'
+        ? moviesData
+        : moviesData.filter((movie) => movie.genre === selectedGenre);
 
-const MOVIES_DATA = [
-  {
-    id:'doomsday', title:'DOOMSDAY: ECLIPSE PROTOCOL', status:'Currently Showing', poster:'posters/doomsday.jpg',
-    rating:'PG-13', language:'English', score:'9.4', genre:'Sci-Fi Thriller', runtime:'2H 28M',
-    synopsis:'When an orbital solar array detects an artificial gravitational anomaly approachin...',
-    fullSynopsis:'When an orbital solar array detects an artificial gravitational anomaly approaching Earth, an estranged astrophysicist and a covert diplomatic envoy must decode a century-old signal before the eclipse becomes permanent.',
-    releaseDate:'Now Exhibiting', director:'Mara Voss', cast:['Elias Ward', 'Nadia Vale', 'Tomas Reed', 'Sera Quinn'],
-    format:'Dual-Laser IMAX • Dolby Atmos', trailerVideo:'trailers/doomsday.mp4', isComingSoon:false
-  },
-  {
-    id:'velvet-sovereign', title:'THE VELVET SOVEREIGN', status:'Currently Showing', poster:'posters/velvet-sovereign.jpg',
-    rating:'R', language:'English', score:'9.1', genre:'Drama', runtime:'2H 14M',
-    synopsis:'Inside a grand European opera house in 1928, a celebrated soprano uncovers a sile...',
-    fullSynopsis:'Inside a grand European opera house in 1928, a celebrated soprano uncovers a silent conspiracy woven through her final performance.',
-    releaseDate:'Now Exhibiting', director:'Lucien Moreau', cast:['Isla Maren', 'Julian Cross', 'Celine Duvall', 'Hugo Bell'],
-    format:'Dolby Atmos • 2.39:1', trailerVideo:'trailers/velvet-sovereign.mp4', isComingSoon:false
-  },
-  {
-    id:'nocturne-obsidian', title:'NOCTURNE IN OBSIDIAN', status:'Currently Showing', poster:'posters/nocturne-obsidian.jpg',
-    rating:'R', language:'French', score:'8.9', genre:'Mystery', runtime:'2H 05M',
-    synopsis:'A master horologist in Geneva is commissioned to repair a timepiece...',
-    fullSynopsis:'A master horologist in Geneva is commissioned to repair a timepiece that appears to count backward through the lives of its owners.',
-    releaseDate:'Now Exhibiting', director:'Etienne Ravel', cast:['Camille Laurent', 'Theo Marchand', 'Elise Perrin', 'Marc Delaunay'],
-    format:'Dolby Atmos • 35mm Presentation', trailerVideo:'trailers/nocturne-obsidian.mp4', isComingSoon:false
-  },
-  {
-    id:'aether-ash', title:'AETHER & ASH', status:'Currently Showing', poster:'posters/aether-ash.jpg',
-    rating:'PG-13', language:'English', score:'8.8', genre:'Action', runtime:'2H 19M',
-    synopsis:'Across high-altitude desert outposts, a salvage pilot intercepts an experimental...',
-    fullSynopsis:'Across high-altitude desert outposts, a salvage pilot intercepts an experimental vessel carrying an impossible passenger.',
-    releaseDate:'Now Exhibiting', director:'Sana Okafor', cast:['Darius Cole', 'Mina Sol', 'Jace Okoro', 'Leena Voss'],
-    format:'Dual-Laser IMAX • Dolby Atmos', trailerVideo:'trailers/aether-ash.mp4', isComingSoon:false
-  },
-  {
-    id:'crimson-solstice', title:'CRIMSON SOLSTICE', status:'Currently Showing', poster:'posters/crimson-solstice.jpg',
-    rating:'PG-13', language:'Spanish', score:'8.7', genre:'Romance', runtime:'1H 58M',
-    synopsis:'Two architects restoring a coastal Andalusian estate over one summer...',
-    fullSynopsis:'Two architects restoring a coastal Andalusian estate over one summer discover that their opposing visions for the old house may have more in common than they expected.',
-    releaseDate:'Now Exhibiting', director:'Elena Marquez', cast:['Lucia Ferrer', 'Mateo Rios', 'Ines Duarte', 'Rafael Costa'],
-    format:'Dolby Atmos • 2.39:1', trailerVideo:'trailers/crimson-solstice.mp4', isComingSoon:false
-  },
-  {
-    id:'ninth-monolith', title:'THE NINTH MONOLITH', status:'Currently Showing', poster:'posters/ninth-monolith.jpg',
-    rating:'PG-13', language:'Japanese', score:'9.2', genre:'Sci-Fi Thriller', runtime:'2H 22M',
-    synopsis:'Deep beneath the Japan Trench, a bathysphere crew discovers a geometric...',
-    fullSynopsis:'Deep beneath the Japan Trench, a bathysphere crew discovers a geometric structure that appears to answer every signal sent from the surface.',
-    releaseDate:'Now Exhibiting', director:'Kenji Arata', cast:['Ren Sato', 'Aiko Mori', 'Yuki Tanaka', 'Daichi Kuroda'],
-    format:'Dual-Laser IMAX • Dolby Atmos', trailerVideo:'trailers/ninth-monolith.mp4', isComingSoon:false
-  },
-  {
-    id:'dynasty-glass', title:'DYNASTY OF GLASS', status:'Coming Soon', poster:'posters/dynasty-glass.jpg',
-    rating:'R', language:'English', score:'9.0', genre:'Drama', runtime:'2H 35M',
-    synopsis:'An architectural dynasty fractures over succession rights when their flagship...',
-    fullSynopsis:'An architectural dynasty fractures over succession rights when their flagship project becomes the prize in a bitter family struggle.',
-    releaseDate:'Coming Soon', director:'Amara Sterling', cast:['Celia Hart', 'Marcus Wynn', 'Evelyn Shaw', 'Adrian Locke'],
-    format:'Dolby Atmos • 2.39:1', trailerVideo:'trailers/dynasty-glass.mp4', isComingSoon:true, reminderSet:true
-  },
-  {
-    id:'mirage-kings', title:'MIRAGE OF KINGS', status:'Coming Soon', poster:'posters/mirage-kings.jpg',
-    rating:'PG-13', language:'Arabic', score:'8.9', genre:'Action', runtime:'2H 11M',
-    synopsis:'An antiquities investigator races across ancient caravan routes to protect an...',
-    fullSynopsis:'An antiquities investigator races across ancient caravan routes to protect an artifact whose origins could redraw the history of a vanished kingdom.',
-    releaseDate:'Coming Soon', director:'Samir Haddad', cast:['Layla Nasser', 'Omar Farouk', 'Salma Idris', 'Karim Zayed'],
-    format:'Dual-Laser IMAX • Dolby Atmos', trailerVideo:'trailers/mirage-kings.mp4', isComingSoon:true
-  },
-  {
-    id:'symphony-zero', title:'SYMPHONY FOR ZERO', status:'Coming Soon', poster:'posters/symphony-zero.jpg',
-    rating:'PG-13', language:'English', score:'8.6', genre:'Mystery', runtime:'2H 04M',
-    synopsis:'During a live broadcast in Vienna, an anonymous conductor alters a classical...',
-    fullSynopsis:'During a live broadcast in Vienna, an anonymous conductor alters a classical score, setting off a chain of clues hidden in the music.',
-    releaseDate:'Coming Soon', director:'Nico Bell', cast:['Mira Ellison', 'Jonah Reed', 'Amelie Weiss', 'Stefan Klein'],
-    format:'Dolby Atmos • 35mm Presentation', trailerVideo:'trailers/symphony-zero.mp4', isComingSoon:true
-  }
-];
-
-const MOVIES_CATALOG = Object.fromEntries(MOVIES_DATA.map(movie => [movie.id, {
-  ...movie,
-  status: movie.isComingSoon ? 'COMING SOON' : 'NOW EXHIBITING',
-  posterImg: movie.poster,
-  trailerVideo: movie.trailerVideo || 'trailers/doomsday.mp4',
-  synopsis: movie.fullSynopsis || movie.synopsis
-}]));
-
-function findMovie(movieName) {
-  return MOVIES_DATA.find(movie => movie.title === movieName) || MOVIES_DATA[0];
-}
-
-function renderCatalogue(catalogueGrid) {
-  catalogueGrid.innerHTML = MOVIES_DATA.map(movie => {
-    const comingSoon = movie.status === 'Coming Soon';
-    const meta = [
-      movie.genre,
-      movie.language,
-      movie.rating,
-      movie.director,
-      movie.cast.join(' '),
-      movie.synopsis,
-      movie.fullSynopsis
-    ].join(' ').toLowerCase();
-    const status = movie.status.toLowerCase().replace(/\s+/g, '-');
-    const action = comingSoon
-      ? `<button class="reminder catalog-reminder${movie.reminderSet ? ' set' : ''}" type="button" data-movie="${movie.title}">${movie.reminderSet ? '✓ Reminder Set' : 'Notify Me'}</button>`
-      : `<button class="btn crimson book-btn" type="button" data-movie="${movie.title}">Book Tickets</button>`;
-    const subtag = comingSoon ? 'COMING SOON' : movie.genre.toUpperCase();
-    return `<article class="movie-card catalog-card" data-movie-id="${movie.id}" data-title="${movie.title.toLowerCase()}" data-genre="${movie.genre.toLowerCase()}" data-lang="${movie.language.toLowerCase()}" data-rating="${movie.rating.toLowerCase()}" data-status="${status}" data-meta="${meta}" data-movie="${movie.title}">
-      <div class="poster-frame catalog-poster">
-        <img class="movie-poster-img" src="${movie.poster}" alt="${movie.title} poster" onerror="this.style.display='none'">
-        <div class="poster-badges"><span>${movie.rating}</span><span>${movie.language}</span><span>★ ${movie.score}</span></div>
-        <div class="catalog-subtag">${subtag}</div>
-        <h3 class="movie-title">${movie.title}</h3>
-        <div class="poster-tag">${movie.genre.toUpperCase()} • ${movie.runtime}</div>
-      </div>
-      <p>${movie.synopsis}</p>
-      <div class="catalog-card-actions">${action}<button class="btn outline details-btn" type="button" data-movie="${movie.title}">Details</button></div>
-    </article>`;
-  }).join('');
-}
-
-let activeCatalogueStatus = 'all';
-
-function applyCatalogueFilters() {
-  const catalogueGrid = document.getElementById('catalogue-grid');
-  if (!catalogueGrid) return;
-
-  const query = document.getElementById('catalogue-search').value.trim().toLowerCase();
-  const selectedGenre = document.getElementById('filter-genre').value.trim().toLowerCase();
-  const selectedLang = document.getElementById('filter-lang').value.trim().toLowerCase();
-  const selectedRating = document.getElementById('filter-rating').value.trim().toLowerCase();
-  const filtered = MOVIES_DATA.filter(movie => {
-    const searchMatch = !query
-      || movie.title.toLowerCase().includes(query)
-      || movie.genre.toLowerCase().includes(query)
-      || movie.language.toLowerCase().includes(query)
-      || (movie.director && movie.director.toLowerCase().includes(query))
-      || (movie.cast && movie.cast.join(' ').toLowerCase().includes(query));
-    const genreMatch = selectedGenre === 'all' || movie.genre.toLowerCase() === selectedGenre;
-    const languageMatch = selectedLang === 'all' || movie.language.toLowerCase() === selectedLang;
-    const ratingMatch = selectedRating === 'all' || movie.rating.toLowerCase() === selectedRating;
-    const statusMatch = activeCatalogueStatus === 'all'
-      || movie.status.toLowerCase().replace(/\s+/g, '-') === activeCatalogueStatus;
-    return searchMatch && genreMatch && languageMatch && ratingMatch && statusMatch;
-  });
-  const filteredTitles = new Set(filtered.map(movie => movie.title));
-  catalogueGrid.querySelectorAll('.catalog-card').forEach(card => {
-    const isMatch = filteredTitles.has(card.dataset.movie);
-    card.classList.toggle('is-hidden', !isMatch);
-    card.hidden = !isMatch;
-  });
-  document.getElementById('catalogue-count').innerHTML = `Showing <strong>${filtered.length}</strong> ${filtered.length === 1 ? 'title' : 'titles'}`;
-  document.getElementById('catalog-empty').hidden = filtered.length !== 0;
-}
-
-function initializeCatalogue() {
-  const catalogueGrid = document.getElementById('catalogue-grid');
-  if (!catalogueGrid) return;
-
-  const searchInput = document.getElementById('catalogue-search');
-  const genreSelect = document.getElementById('filter-genre');
-  const languageSelect = document.getElementById('filter-lang');
-  const ratingSelect = document.getElementById('filter-rating');
-  const count = document.getElementById('catalogue-count');
-  const emptyState = document.getElementById('catalog-empty');
-  const resetButton = document.getElementById('reset-filters-btn');
-  const resetEmptyButton = document.getElementById('reset-all-filters');
-  const statusPills = document.querySelectorAll('.status-pill');
-  if (!searchInput || !genreSelect || !languageSelect || !ratingSelect || !count || !emptyState || !resetButton || !resetEmptyButton || !statusPills.length) return;
-
-  renderCatalogue(catalogueGrid);
-  const updateStatusPills = activePill => statusPills.forEach(pill => {
-    const active = pill === activePill;
-    pill.classList.toggle('active', active);
-    pill.setAttribute('aria-pressed', String(active));
-  });
-  const resetFilters = () => {
-    searchInput.value = '';
-    [genreSelect, languageSelect, ratingSelect].forEach(select => {
-      select.value = 'all';
-    });
-    activeCatalogueStatus = 'all';
-    updateStatusPills([...statusPills].find(pill => pill.dataset.status === 'all'));
-    applyCatalogueFilters();
-  };
-  const queryParams = new URLSearchParams(window.location.search);
-  searchInput.value = queryParams.get('search') || '';
-  [[genreSelect, 'genre'], [languageSelect, 'lang'], [ratingSelect, 'rating']].forEach(([select, key]) => {
-    const requestedValue = queryParams.get(key)?.trim().toLowerCase();
-    if (requestedValue && [...select.options].some(option => option.value === requestedValue)) {
-      select.value = requestedValue;
-    }
-  });
-  const requestedStatus = queryParams.get('status')?.trim().toLowerCase().replace(/\s+/g, '-');
-  if (requestedStatus && [...statusPills].some(pill => pill.dataset.status === requestedStatus)) {
-    activeCatalogueStatus = requestedStatus;
-  }
-  updateStatusPills([...statusPills].find(pill => pill.dataset.status === activeCatalogueStatus));
-
-  searchInput.addEventListener('input', applyCatalogueFilters);
-  [genreSelect, languageSelect, ratingSelect].forEach(select => select.addEventListener('change', applyCatalogueFilters));
-  statusPills.forEach(pill => pill.addEventListener('click', () => {
-    activeCatalogueStatus = pill.dataset.status;
-    updateStatusPills(pill);
-    applyCatalogueFilters();
-  }));
-  resetButton.addEventListener('click', resetFilters);
-  resetEmptyButton.addEventListener('click', resetFilters);
-  applyCatalogueFilters();
-}
-
-document.addEventListener('DOMContentLoaded', initializeCatalogue, { once:true });
-
-function modalMovieHeader(movieName, movie) {
-  return `<div class="modal-movie-header"><img class="modal-poster-img" src="${movie.poster}" alt="${movieName} poster" onerror="this.style.display='none'"><h2 id="modal-title">${movieName}</h2></div>`;
-}
-
-function openDetails(movieName) {
-  const movie = findMovie(movieName);
-  modalContent.innerHTML = `${modalMovieHeader(movieName, movie)}<div class="detail-meta"><span>${movie.rating}</span><span>${movie.language}</span><span>${movie.runtime}</span><span>${movie.format}</span><span>Director: ${movie.director}</span><span>Cast: ${movie.cast.join(', ')}</span></div><p class="synopsis">${movie.fullSynopsis}</p><button class="btn gold details-reserve" type="button" data-movie="${movieName}">Reserve Seats</button>`;
-  openModal();
-  modalContent.querySelector('.details-reserve').addEventListener('click', event => openBooking(event.currentTarget.dataset.movie));
-}
-
-function openBooking(movieName) {
-  const movie = findMovie(movieName);
-  modalContent.innerHTML = `
-    ${modalMovieHeader(movieName, movie)}
-    <div class="showtime-pills" aria-label="Showtimes">
-      <button class="active" type="button">4:30 PM</button><button type="button">7:45 PM</button><button type="button">10:30 PM</button>
-    </div>
-    <div class="screen-curve">CURVED CINEMA SCREEN</div>
-    <div class="seat-grid" aria-label="Seat selection"></div>
-    <div class="seat-labels"><span><i class="available"></i>Available</span><span><i class="selected"></i>Selected</span><span><i class="occupied"></i>Occupied</span></div>
-    <div class="checkout">
-      <label>PROMO CODE<input id="promo-input" type="text" placeholder="Enter code"></label>
-      <strong id="seat-total">$0.00</strong>
-      <button class="btn gold" id="confirm-reservation" type="button">Confirm Reservation</button>
-    </div>`;
-  openModal();
-  const grid = modalContent.querySelector('.seat-grid');
-  const occupied = new Set([2, 7, 18, 19, 31, 42, 47]);
-  for (let i = 0; i < 50; i++) {
-    const seat = document.createElement('button');
-    seat.type = 'button';
-    seat.className = `seat ${occupied.has(i) ? 'occupied' : 'available'}`;
-    seat.setAttribute('aria-label', `Seat ${i + 1}`);
-    if (!occupied.has(i)) seat.addEventListener('click', () => {
-      seat.classList.toggle('selected');
-      updateTotal();
-    });
-    grid.appendChild(seat);
-  }
-  modalContent.querySelectorAll('.showtime-pills button').forEach(button => {
-    button.addEventListener('click', () => {
-      modalContent.querySelectorAll('.showtime-pills button').forEach(b => b.classList.remove('active'));
-      button.classList.add('active');
-    });
-  });
-  modalContent.querySelector('#promo-input').addEventListener('input', updateTotal);
-  modalContent.querySelector('#confirm-reservation').addEventListener('click', () => {
-    const selected = modalContent.querySelectorAll('.seat.selected').length;
-    if (!selected) {
-      showToast('Select at least one seat to continue');
+    if (filtered.length === 0) {
+      moviesGrid.innerHTML =
+        '<p class="movies-empty">No screenings currently scheduled in this genre.</p>';
       return;
     }
-    const count = document.querySelector('#ticket-count');
-    const nextCount = Number(count.textContent) + selected;
-    count.textContent = String(nextCount);
-    document.querySelector('#utility-ticket-count').textContent = `My Tickets (${nextCount})`;
-    closeModal();
-    showToast(`Reservation confirmed — ${selected} seat${selected > 1 ? 's' : ''} added`);
-  });
-  updateTotal();
-}
 
-function updateTotal() {
-  const selected = modalContent.querySelectorAll('.seat.selected').length;
-  const promo = modalContent.querySelector('#promo-input')?.value.trim().toUpperCase();
-  const discount = promo === 'GOLD15' ? 0.85 : 1;
-  const total = selected * 42 * discount;
-  const totalEl = modalContent.querySelector('#seat-total');
-  if (totalEl) totalEl.textContent = `$${total.toFixed(2)}${promo === 'GOLD15' && selected ? ' • GOLD15' : ''}`;
-}
-
-function openModal() {
-  modalBackdrop.classList.add('open');
-  modalBackdrop.setAttribute('aria-hidden', 'false');
-  document.body.style.overflow = 'hidden';
-}
-function closeModal() {
-  modalBackdrop.classList.remove('open');
-  modalBackdrop.setAttribute('aria-hidden', 'true');
-  document.body.style.overflow = '';
-}
-document.querySelector('.modal-close').addEventListener('click', closeModal);
-modalBackdrop.addEventListener('click', event => { if (event.target === modalBackdrop) closeModal(); });
-document.addEventListener('keydown', event => { if (event.key === 'Escape') closeModal(); });
-
-document.addEventListener('click', event => {
-  const target = event.target instanceof Element ? event.target : null;
-  if (!target) return;
-  const card = target.closest('.movie-card[data-movie-id], .coming-card[data-movie-id]');
-  const bookingButton = target.closest('.reserve-btn,.book-btn');
-  const reminderButton = target.closest('.reminder');
-  if (card && !bookingButton && !reminderButton && card.dataset.movieId) {
-    window.location.href = `movie-details.html?id=${card.dataset.movieId}`;
-    return;
-  }
-  if (bookingButton) {
-    openBooking(bookingButton.dataset.movie);
-    return;
-  }
-  const detailsButton = target.closest('.details-btn');
-  if (detailsButton) openDetails(detailsButton.dataset.movie);
-});
-
-let toastTimer;
-function showToast(message) {
-  const toast = document.querySelector('#toast');
-  toast.textContent = message;
-  toast.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
-}
-
-function initializeMovieDetailPage() {
-  const detailPage = document.querySelector('#movie-detail-page');
-  if (!detailPage) return;
-
-  const movieId = new URLSearchParams(window.location.search).get('id') || 'doomsday';
-  const movie = MOVIES_CATALOG[movieId] || MOVIES_CATALOG.doomsday;
-  document.title = `${movie.title} — THEATRON Cinema Lounges`;
-
-  const poster = document.querySelector('#detail-poster-img');
-  poster.src = movie.posterImg;
-  poster.alt = `${movie.title} poster`;
-  document.querySelector('#detail-poster-title').textContent = movie.title;
-  document.querySelector('#detail-status-badge').textContent = movie.status;
-  document.querySelector('#detail-title').textContent = movie.title;
-  document.querySelector('#detail-release-date').textContent = movie.releaseDate;
-  document.querySelector('#detail-director').textContent = movie.director;
-  document.querySelector('#detail-synopsis').textContent = movie.synopsis;
-  document.querySelector('#detail-meta-pills').innerHTML = [
-    movie.rating,
-    movie.genre,
-    movie.runtime,
-    movie.language,
-    `★ ${movie.score} / 10`
-  ].map(item => `<span>${item}</span>`).join('');
-  document.querySelector('#detail-cast-grid').innerHTML = [
-    `<article class="detail-cast-card"><span>DIRECTOR</span><strong>${movie.director}</strong></article>`,
-    ...movie.cast.map(actor => `<article class="detail-cast-card"><span>STARRING</span><strong>${actor}</strong></article>`)
-  ].join('');
-  document.querySelector('#detail-recommendations').innerHTML = Object.values(MOVIES_CATALOG)
-    .filter(recommended => recommended.id !== movie.id)
-    .slice(0, 4)
-    .map(recommended => `<a class="detail-recommendation-card" href="movie-details.html?id=${recommended.id}">
-      <div class="detail-recommendation-poster"><img src="${recommended.posterImg}" alt="${recommended.title} poster" onerror="this.style.display='none'"></div>
-      <span>${recommended.status}</span>
-      <strong class="movie-title">${recommended.title}</strong>
-    </a>`).join('');
-
-  const primaryButton = document.querySelector('#detail-primary-cta');
-  if (movie.isComingSoon) {
-    primaryButton.textContent = 'Notify Me of Premiere';
-    let reminderIsSet = false;
-    primaryButton.addEventListener('click', () => {
-      reminderIsSet = !reminderIsSet;
-      primaryButton.textContent = reminderIsSet ? '✓ Premiere Reminder Set' : 'Notify Me of Premiere';
-      showToast(reminderIsSet ? 'Premiere reminder has been set' : 'Premiere reminder has been removed');
-    });
-  } else {
-    primaryButton.textContent = 'Book Tickets Now';
-    primaryButton.addEventListener('click', () => openBooking(movie.title));
-  }
-
-  const trailerModal = document.querySelector('#detail-trailer-modal');
-  const trailerVideo = document.querySelector('#detail-trailer-video');
-  const trailerSource = document.querySelector('#detail-trailer-source');
-  const closeTrailer = () => {
-    trailerVideo.pause();
-    trailerModal.classList.remove('open');
-    trailerModal.setAttribute('aria-hidden', 'true');
+    moviesGrid.innerHTML = filtered
+      .map(
+        (movie) => `
+        <article class="movie-card">
+          <div class="movie-poster-wrap">
+            <span class="movie-genre-tag">${movie.genre}</span>
+            <img
+              src="${movie.image}"
+              alt="${movie.title} poster"
+              loading="lazy"
+              onerror="this.parentElement.classList.add('is-missing-poster')"
+            />
+            <div class="poster-fallback" aria-hidden="true">
+              <span class="poster-fallback-title">${movie.title}</span>
+              <span class="poster-fallback-genre">${movie.genre} &bull; ${movie.duration}</span>
+            </div>
+          </div>
+          <div class="movie-card-body">
+            <h3 class="movie-card-title">${movie.title}</h3>
+            <p class="movie-card-specs">${movie.duration} &bull; ${movie.format}</p>
+            <p class="movie-card-desc">${movie.description}</p>
+            <div>
+              <span class="showtime-label">Showtimes</span>
+              <div class="showtime-chips">
+                ${movie.showtimes
+                  .map((time) => `<button class="showtime-chip" type="button">${time}</button>`)
+                  .join('')}
+              </div>
+            </div>
+          </div>
+        </article>
+      `
+      )
+      .join('');
   };
-  trailerSource.src = movie.trailerVideo || 'trailers/doomsday.mp4';
-  trailerVideo.load();
-  document.querySelector('#detail-trailer-open').addEventListener('click', () => {
-    trailerModal.classList.add('open');
-    trailerModal.setAttribute('aria-hidden', 'false');
-    trailerVideo.play().catch(error => {
-      if (error.name === 'AbortError') return;
-      console.error('Unable to play the movie trailer.', error);
-      showToast('Trailer playback is unavailable');
-    });
-  });
-  document.querySelector('#detail-trailer-close').addEventListener('click', closeTrailer);
-  trailerModal.addEventListener('click', event => {
-    if (event.target === trailerModal) closeTrailer();
-  });
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') closeTrailer();
-  });
-}
 
-document.addEventListener('DOMContentLoaded', initializeMovieDetailPage, { once:true });
+  if (moviesGrid) {
+    renderMovies('All');
+
+    filterButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const genre = button.dataset.genre || 'All';
+        filterButtons.forEach((btn) => {
+          const isSelected = btn === button;
+          btn.classList.toggle('is-active', isSelected);
+          btn.setAttribute('aria-pressed', String(isSelected));
+        });
+        renderMovies(genre);
+      });
+    });
+
+    // Interactive selection state for showtime chips across spotlight and grid.
+    document.addEventListener('click', (event) => {
+      const chip = event.target.closest('.showtime-chip');
+      if (!chip) return;
+      const container = chip.closest('.showtime-chips');
+      if (!container) return;
+      container.querySelectorAll('.showtime-chip').forEach((c) => {
+        c.classList.toggle('is-selected', c === chip);
+      });
+    });
+  }
+
+  // ------------------------------------------------------------------------
+  // Three Imperial Auditoriums Tab Switcher (index.html)
+  // ------------------------------------------------------------------------
+  const hallsData = {
+    'hall-01': {
+      badge: 'Hall 01 • Flagship',
+      kicker: 'Hall 01 • Dual-Laser Flagship',
+      title: 'The Obsidian IMAX',
+      image: 'images/hall-01.jpg',
+      alt: 'Hall 01 — The Obsidian IMAX interior',
+      fallbackSub: 'Hall 01 • 28 Italian Recliners',
+      description:
+        'Our signature 28-seat grand lounge built around an edge-to-edge silver curved screen, delivering razor-sharp Dual-Laser IMAX imagery and thunderous 64-channel Atmos depth.',
+      specs: [
+        { label: 'Seating', value: '28 Heated Italian Recliners' },
+        { label: 'Projection', value: '4K Dual-Laser IMAX' },
+        { label: 'Acoustics', value: '64-Channel Dolby Atmos' },
+        { label: 'Hospitality', value: 'In-Seat Silent Butler Call' },
+      ],
+      ctaText: 'Book Hall 01 — The Obsidian IMAX',
+    },
+    'hall-02': {
+      badge: 'Hall 02 • Royal Suite',
+      kicker: 'Hall 02 • Crimson Velvet Chamber',
+      title: 'The Crimson Royal Suite',
+      image: 'images/hall-02.jpg',
+      alt: 'Hall 02 — The Crimson Royal Suite interior',
+      fallbackSub: 'Hall 02 • 16 Double Loveseats',
+      description:
+        'Draped in deep crimson acoustic velvet with wide loveseat pods, warm brass reading sconces, and direct kitchen pass-through for uninterrupted multi-course lounge dining.',
+      specs: [
+        { label: 'Seating', value: '16 Twin Motorized Loveseats' },
+        { label: 'Projection', value: '4K RGB Laser Reference' },
+        { label: 'Acoustics', value: '64-Channel Atmos Dome' },
+        { label: 'Hospitality', value: 'Dedicated Culinary Steward' },
+      ],
+      ctaText: 'Book Hall 02 — The Crimson Royal Suite',
+    },
+    'hall-03': {
+      badge: 'Hall 03 • Private Salon',
+      kicker: 'Hall 03 • Sovereign Buyout Lounge',
+      title: 'The Sovereign Salon',
+      image: 'images/hall-03.jpg',
+      alt: 'Hall 03 — The Sovereign Salon interior',
+      fallbackSub: 'Hall 03 • 12 Private Club Seats',
+      description:
+        'Designed for private family premieres, diplomatic screenings, and executive buyouts in F-7 Markaz with an adjacent pre-screening espresso bar and custom lighting presets.',
+      specs: [
+        { label: 'Seating', value: '12 First-Class Club Loungers' },
+        { label: 'Projection', value: '4K Laser HDR Cinema' },
+        { label: 'Acoustics', value: 'Isolated Studio Tuning' },
+        { label: 'Hospitality', value: 'Private Foyer & Valet Entry' },
+      ],
+      ctaText: 'Book Hall 03 — The Sovereign Salon',
+    },
+  };
+
+  const hallTabs = document.querySelectorAll('.hall-tab[data-hall]');
+  const hallPanel = document.getElementById('auditorium-panel');
+
+  if (hallTabs.length && hallPanel) {
+    const hallBadge = document.getElementById('hall-badge');
+    const hallImage = document.getElementById('hall-image');
+    const hallFallbackTitle = document.getElementById('hall-fallback-title');
+    const hallFallbackSub = document.getElementById('hall-fallback-sub');
+    const hallKicker = document.getElementById('hall-kicker');
+    const hallTitle = document.getElementById('hall-title');
+    const hallDesc = document.getElementById('hall-desc');
+    const hallSpecs = document.getElementById('hall-specs');
+    const hallBookBtn = document.getElementById('hall-book-btn');
+
+    const updateHallView = (hallKey) => {
+      const data = hallsData[hallKey];
+      if (!data) return;
+
+      hallTabs.forEach((tab) => {
+        const isActive = tab.dataset.hall === hallKey;
+        tab.classList.toggle('is-active', isActive);
+        tab.setAttribute('aria-selected', String(isActive));
+      });
+
+      if (hallBadge) hallBadge.textContent = data.badge;
+      if (hallKicker) hallKicker.textContent = data.kicker;
+      if (hallTitle) hallTitle.textContent = data.title;
+      if (hallDesc) hallDesc.textContent = data.description;
+      if (hallFallbackTitle) hallFallbackTitle.textContent = data.title;
+      if (hallFallbackSub) hallFallbackSub.textContent = data.fallbackSub;
+
+      if (hallImage) {
+        hallImage.parentElement.classList.remove('is-missing-poster');
+        hallImage.src = data.image;
+        hallImage.alt = data.alt;
+      }
+
+      if (hallSpecs) {
+        hallSpecs.innerHTML = data.specs
+          .map(
+            (spec) => `
+            <div class="hall-spec-cell">
+              <dt>${spec.label}</dt>
+              <dd>${spec.value}</dd>
+            </div>
+          `
+          )
+          .join('');
+      }
+
+      if (hallBookBtn) {
+        hallBookBtn.textContent = data.ctaText;
+        hallBookBtn.dataset.selectedHall = hallKey;
+      }
+    };
+
+    hallTabs.forEach((tab) => {
+      tab.addEventListener('click', () => updateHallView(tab.dataset.hall));
+    });
+  }
+
+  // ------------------------------------------------------------------------
+  // Filterable 6-Card Architectural Gallery & Fullscreen Lightbox (index.html)
+  // ------------------------------------------------------------------------
+  const galleryData = [
+    {
+      id: 1,
+      category: 'Auditoriums',
+      title: 'The Obsidian IMAX Curved Screen',
+      image: 'images/gallery-1.jpg',
+      description:
+        'Floor-to-ceiling perforated acoustic screen framed by matte obsidian baffles and recessed gold coves.',
+    },
+    {
+      id: 2,
+      category: 'Foyer & Bar',
+      title: 'The Crimson Espresso & Elixir Bar',
+      image: 'images/gallery-2.jpg',
+      description:
+        'Nero Marquina marble bar counter serving handcrafted saffron mocktails and specialty pour-overs.',
+    },
+    {
+      id: 3,
+      category: 'Private Suites',
+      title: 'Crimson Royal Loveseat Pods',
+      image: 'images/gallery-3.jpg',
+      description:
+        'Motorized twin velvet recliners fitted with brass dining trays and whisper-quiet butler call buttons.',
+    },
+    {
+      id: 4,
+      category: 'Auditoriums',
+      title: '64-Channel Acoustic Ceiling Array',
+      image: 'images/gallery-4.jpg',
+      description:
+        'Precision-angled overhead speakers concealed behind geometric crimson-and-brass architectural ribs.',
+    },
+    {
+      id: 5,
+      category: 'Foyer & Bar',
+      title: 'Diamond Crest Grand Arrival Atrium',
+      image: 'images/gallery-5.jpg',
+      description:
+        'Double-height entrance hall in F-7 Markaz featuring warm chandelier geometry and velvet waiting alcoves.',
+    },
+    {
+      id: 6,
+      category: 'Private Suites',
+      title: 'The Sovereign Pre-Screening Salon',
+      image: 'images/gallery-6.jpg',
+      description:
+        'Sound-isolated hospitality lounge reserved for private premiere hosts and VIP buyout guests.',
+    },
+  ];
+
+  const galleryGrid = document.getElementById('gallery-grid');
+  const galleryFilterBtns = document.querySelectorAll('.filter-btn[data-gallery-filter]');
+  const lightboxModal = document.getElementById('lightbox-modal');
+
+  if (galleryGrid && lightboxModal) {
+    let visibleGalleryItems = [...galleryData];
+    let currentLightboxIndex = 0;
+    let lastFocusedElement = null;
+
+    const lbCounter = document.getElementById('lightbox-counter');
+    const lbMediaWrap = document.getElementById('lightbox-media-wrap');
+    const lbImage = document.getElementById('lightbox-image');
+    const lbFallbackTitle = document.getElementById('lightbox-fallback-title');
+    const lbFallbackCat = document.getElementById('lightbox-fallback-cat');
+    const lbCategory = document.getElementById('lightbox-category');
+    const lbTitle = document.getElementById('lightbox-title');
+    const lbDesc = document.getElementById('lightbox-desc');
+    const lbClose = document.getElementById('lightbox-close');
+    const lbPrev = document.getElementById('lightbox-prev');
+    const lbNext = document.getElementById('lightbox-next');
+
+    const renderGallery = (category) => {
+      visibleGalleryItems =
+        category === 'All'
+          ? [...galleryData]
+          : galleryData.filter((item) => item.category === category);
+
+      galleryGrid.innerHTML = visibleGalleryItems
+        .map(
+          (item, index) => `
+          <button
+            class="gallery-card"
+            type="button"
+            data-gallery-index="${index}"
+            aria-label="Inspect ${item.title} in fullscreen"
+          >
+            <div class="gallery-thumb">
+              <img
+                src="${item.image}"
+                alt="${item.title}"
+                loading="lazy"
+                onerror="this.parentElement.classList.add('is-missing-poster')"
+              />
+              <div class="poster-fallback" aria-hidden="true">
+                <span class="poster-fallback-title">${item.title}</span>
+                <span class="poster-fallback-genre">${item.category}</span>
+              </div>
+              <span class="gallery-expand-hint">Expand</span>
+            </div>
+            <div class="gallery-card-meta">
+              <span class="gallery-card-cat">${item.category}</span>
+              <h3 class="gallery-card-title">${item.title}</h3>
+            </div>
+          </button>
+        `
+        )
+        .join('');
+    };
+
+    const syncLightboxSlide = () => {
+      const item = visibleGalleryItems[currentLightboxIndex];
+      if (!item) return;
+
+      if (lbCounter) {
+        lbCounter.textContent = `${currentLightboxIndex + 1} / ${visibleGalleryItems.length}`;
+      }
+      if (lbMediaWrap) lbMediaWrap.classList.remove('is-missing-poster');
+      if (lbImage) {
+        lbImage.src = item.image;
+        lbImage.alt = item.title;
+      }
+      if (lbFallbackTitle) lbFallbackTitle.textContent = item.title;
+      if (lbFallbackCat) lbFallbackCat.textContent = item.category;
+      if (lbCategory) lbCategory.textContent = item.category;
+      if (lbTitle) lbTitle.textContent = item.title;
+      if (lbDesc) lbDesc.textContent = item.description;
+    };
+
+    const openLightbox = (index) => {
+      lastFocusedElement = document.activeElement;
+      currentLightboxIndex = index;
+      syncLightboxSlide();
+      lightboxModal.hidden = false;
+      document.body.style.overflow = 'hidden';
+      if (lbClose) lbClose.focus();
+    };
+
+    const closeLightbox = () => {
+      if (lightboxModal.hidden) return;
+      lightboxModal.hidden = true;
+      document.body.style.overflow = '';
+      if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+        lastFocusedElement.focus();
+      }
+    };
+
+    const stepLightbox = (delta) => {
+      if (visibleGalleryItems.length === 0) return;
+      currentLightboxIndex =
+        (currentLightboxIndex + delta + visibleGalleryItems.length) % visibleGalleryItems.length;
+      syncLightboxSlide();
+    };
+
+    renderGallery('All');
+
+    galleryFilterBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const category = btn.dataset.galleryFilter || 'All';
+        galleryFilterBtns.forEach((b) => {
+          const isSelected = b === btn;
+          b.classList.toggle('is-active', isSelected);
+          b.setAttribute('aria-pressed', String(isSelected));
+        });
+        renderGallery(category);
+      });
+    });
+
+    galleryGrid.addEventListener('click', (event) => {
+      const card = event.target.closest('.gallery-card[data-gallery-index]');
+      if (!card) return;
+      const idx = Number(card.dataset.galleryIndex);
+      if (!Number.isNaN(idx)) openLightbox(idx);
+    });
+
+    if (lbClose) lbClose.addEventListener('click', closeLightbox);
+    if (lbPrev) lbPrev.addEventListener('click', () => stepLightbox(-1));
+    if (lbNext) lbNext.addEventListener('click', () => stepLightbox(1));
+
+    lightboxModal.querySelectorAll('[data-lightbox-close]').forEach((el) => {
+      el.addEventListener('click', closeLightbox);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (lightboxModal.hidden) return;
+      if (event.key === 'Escape') {
+        closeLightbox();
+      } else if (event.key === 'ArrowRight') {
+        stepLightbox(1);
+      } else if (event.key === 'ArrowLeft') {
+        stepLightbox(-1);
+      }
+    });
+  }
+})();

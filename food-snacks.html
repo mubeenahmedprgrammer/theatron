@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Food &amp; Snacks Lounge | THEATRON Cinema Lounges</title>
+  <meta name="description" content="Order cinema popcorn, burgers, pizza, sweets, beverages, and combos by screening genre with in-seat butler delivery at THEATRON Islamabad.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <style>
+    :root {
+      --color-obsidian-bg: #090305;
+      --color-border: rgba(212, 175, 55, 0.22);
+      --color-gold: #d4af37;
+      --color-text-light: #e6dfd8;
+      --color-text-dim: #a89f97;
+    }
+
+    .food-hero-backdrop {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 25% 25%, rgba(158, 27, 50, 0.34), transparent 55%),
+        radial-gradient(circle at 78% 30%, rgba(212, 175, 55, 0.16), transparent 50%),
+        linear-gradient(180deg, #170409 0%, #0b0205 70%, #080204 100%);
+    }
+
+    .food-hero-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.34;
+    }
+
+    .page-subnav-bar {
+      background: rgba(14, 4, 8, 0.96);
+      border-top: 1px solid rgba(212, 175, 55, 0.16);
+      border-bottom: 1px solid rgba(212, 175, 55, 0.24);
+      padding: 10px 0;
+    }
+
+    .page-subnav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .page-subnav-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-gold);
+      font-weight: 700;
+    }
+
+    .page-subnav-links {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .page-subnav-link {
+      font-size: 0.84rem;
+      color: var(--color-text-light);
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      background: rgba(255, 255, 255, 0.03);
+      text-decoration: none;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .page-subnav-link:hover,
+    .page-subnav-link.active {
+      background: rgba(212, 175, 55, 0.16);
+      border-color: var(--color-gold);
+      color: #fff;
+    }
+
+    .filter-bar-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .filter-row-label {
+      text-align: center;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--color-gold);
+      margin-bottom: 4px;
+    }
+
+    .bill-summary-box {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      font-size: 0.84rem;
+    }
+
+    .bill-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      color: var(--color-text-light);
+    }
+
+    .bill-line:last-child {
+      margin-bottom: 0;
+      padding-top: 6px;
+      border-top: 1px dashed rgba(212, 175, 55, 0.3);
+      font-weight: 700;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= TOP UTILITY BAR ================= -->
+  <aside class="utility-bar" aria-label="Concessions Announcements">
+    <div class="container utility-bar-inner">
+      <div class="utility-left">
+        <span class="utility-item">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+          <strong>In-Seat Butler Service:</strong> Active in Halls 01, 02 &amp; 03
+        </span>
+        <span class="utility-item">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+          Avg. Recliner Delivery: 8–12 Mins
+        </span>
+      </div>
+      <div class="utility-right">
+        <span class="utility-item">
+          <span class="status-dot"></span>
+          <span>Kitchen &amp; Mixology Bar Open • Freshly Popped</span>
+        </span>
+        <span class="utility-item">
+          <span class="badge badge-gold">PKR • BUTLER TRAY</span>
+        </span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= STICKY NAVBAR (3 MAIN PAGES) ================= -->
+  <header class="main-header" id="mainHeader">
+    <div class="container navbar">
+      <a href="cinema.html" class="brand-logo" aria-label="THEATRON Homepage">
+        <div class="logo-crest">
+          <span>T</span>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">THEATRON</span>
+          <span class="brand-subtitle">CINEMA LOUNGES • ISLAMABAD</span>
+        </div>
+      </a>
+
+      <nav class="nav-menu" id="navMenu" aria-label="Main Pages">
+        <a href="cinema.html" class="nav-link" data-main-page="cinema">Cinema &amp; Repertoire</a>
+        <a href="food-snacks.html" class="nav-link active" data-main-page="food">Food &amp; Snacks</a>
+        <a href="reviews.html" class="nav-link" data-main-page="reviews">Guest Reviews</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button type="button" class="cart-toggle-btn" id="openTrayBtn" aria-label="Open Lounge Tray">
+          <span>Lounge Tray</span>
+          <span class="cart-badge" id="navTrayCount">0</span>
+        </button>
+        <a href="cinema.html#floorplan" class="btn btn-primary btn-sm">Reserve Seats</a>
+        <button type="button" class="nav-hamburger" id="navHamburger" aria-label="Toggle navigation">☰</button>
+      </div>
+    </div>
+
+    <!-- Sub-items shown directly underneath the active main page -->
+    <div class="page-subnav-bar" id="activePageSubnav" aria-label="Food & Snacks Contents">
+      <div class="container page-subnav-inner">
+        <span class="page-subnav-title">Inside Food &amp; Snacks:</span>
+        <div class="page-subnav-links" id="subnavLinks">
+          <a href="#concessionsMenu" class="page-subnav-link active" data-subfilter="all">All Menu Items</a>
+          <a href="#concessionsMenu" class="page-subnav-link" data-subfilter="popcorn">Popcorn &amp; Classics</a>
+          <a href="#concessionsMenu" class="page-subnav-link" data-subfilter="mains">Burgers, Pizza &amp; Bites</a>
+          <a href="#concessionsMenu" class="page-subnav-link" data-subfilter="sweets">Sweets &amp; Sips</a>
+          <a href="#combos" class="page-subnav-link" data-subfilter="combos">Royal Screening Combos</a>
+          <button type="button" class="page-subnav-link" id="subnavTrayBtn" style="cursor:pointer;">Lounge Tray</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ================= FOOD HERO BANNER ================= -->
+    <section class="hero-section" style="min-height: 54vh; padding-top: 112px; padding-bottom: 52px;">
+      <div class="food-hero-backdrop">
+        <img class="food-hero-photo" src="images/food-hero.jpg" alt="THEATRON cinema concessions" onerror="this.style.display='none'">
+        <div class="hero-overlay"></div>
+      </div>
+
+      <div class="container hero-content">
+        <div class="hero-tag">
+          <span class="tag-spark">✦</span>
+          HAUTE CONCESSIONS • IN-SEAT BUTLER DELIVERY
+          <span class="tag-spark">✦</span>
+        </div>
+
+        <h1 class="hero-title" style="font-size: clamp(2.2rem, 4.5vw, 3.6rem);">
+          Artisan Concessions &amp; <span>Recliner Dining</span>
+        </h1>
+
+        <p class="hero-lead">
+          Crafted for film evenings in F-7 Markaz. Pick popcorn, burgers, pizza, sweets, chai, and combos by category or screening genre, then order straight to your recliner.
+        </p>
+
+        <div class="hero-actions" style="margin-bottom: 0;">
+          <a href="#concessionsMenu" class="btn btn-gold">
+            <span>Browse Full Menu</span>
+          </a>
+          <a href="#combos" class="btn btn-outline">
+            <span>Premiere Combos</span>
+          </a>
+          <button type="button" class="btn btn-primary" id="heroTrayBtn">
+            <span>Open Lounge Tray (<span id="heroTrayCount">0</span>)</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= INTERACTIVE CONCESSIONS CATALOG ================= -->
+    <section class="section-padding" id="concessionsMenu" style="background: var(--color-obsidian-bg);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Curated Culinary Lineup</span>
+          <h2 class="section-title">Snacks, Burgers, Pizza, Sweets &amp; Sips</h2>
+          <p class="section-subtitle">
+            Filter independently by food category and movie genre.
+          </p>
+        </div>
+
+        <div class="filter-bar-stack">
+          <div>
+            <div class="filter-row-label">By Category</div>
+            <div class="genre-filter-wrapper" id="foodCategoryFilters" style="margin-bottom: 8px;">
+              <button type="button" class="genre-filter-btn active" data-cat="all">All Categories</button>
+              <button type="button" class="genre-filter-btn" data-cat="popcorn">Popcorn &amp; Classics</button>
+              <button type="button" class="genre-filter-btn" data-cat="mains">Burgers, Pizza &amp; Bites</button>
+              <button type="button" class="genre-filter-btn" data-cat="sweets">Sweets &amp; Sips</button>
+            </div>
+          </div>
+
+          <div>
+            <div class="filter-row-label">By Movie Genre Pairing</div>
+            <div class="genre-filter-wrapper" id="foodGenreFilters">
+              <button type="button" class="genre-filter-btn active" data-genre="all">All Genres</button>
+              <button type="button" class="genre-filter-btn" data-genre="action">Action &amp; IMAX</button>
+              <button type="button" class="genre-filter-btn" data-genre="thriller">Midnight &amp; Thriller</button>
+              <button type="button" class="genre-filter-btn" data-genre="romance">Drama &amp; Romance</button>
+              <button type="button" class="genre-filter-btn" data-genre="comedy">Comedy &amp; Family</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic Food Grid -->
+        <div class="movies-grid" id="foodMenuGrid" style="margin-bottom: 64px;"></div>
+
+        <!-- ================= PREMIERE COMBOS SECTION ================= -->
+        <div id="combos" style="padding-top: 20px;">
+          <div class="section-header">
+            <span class="section-tag">Best Value Pairings</span>
+            <h2 class="section-title">Royal Screening Combos</h2>
+            <p class="section-subtitle">
+              Curated combos matched to your screening mood—also filtered when you pick a genre above.
+            </p>
+          </div>
+
+          <div class="movies-grid" id="combosGrid"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= SLIDE-OVER LOUNGE TRAY & PAYMENT DRAWER ================= -->
+  <div class="modal-backdrop" id="trayDrawer" role="dialog" aria-modal="true" aria-labelledby="trayHeading" style="justify-content: flex-end; padding: 0;">
+    <div class="modal-card" style="max-width: 450px; height: 100vh; max-height: 100vh; border-radius: 0; border-right: none; border-top: none; border-bottom: none; display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto;">
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 16px; margin-bottom: 20px;">
+          <div>
+            <span class="modal-tag">Butler Order Tray</span>
+            <h3 class="modal-title" id="trayHeading" style="font-size: 1.4rem; margin: 0;">Your Lounge Tray</h3>
+          </div>
+          <button type="button" class="modal-close-btn" id="closeTrayBtn" style="position: static;" aria-label="Close Lounge Tray">✕</button>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="deliveryModeSelect">Service &amp; Delivery Mode</label>
+          <select class="form-select" id="deliveryModeSelect">
+            <option value="In-Seat Butler (Hall 01 — IMAX)">In-Seat Butler (Hall 01 — IMAX)</option>
+            <option value="In-Seat Butler (Hall 02 — Atmos)">In-Seat Butler (Hall 02 — Atmos)</option>
+            <option value="In-Seat Butler (Hall 03 — Royal Salon)">In-Seat Butler (Hall 03 — Royal Salon)</option>
+            <option value="Express Pickup — Gourmet Bar (F-7)">Express Pickup — Gourmet Bar (F-7)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="seatOrGuestRef">Seat / Recliner or Guest Name</label>
+          <input type="text" class="form-input" id="seatOrGuestRef" placeholder="e.g. Row D, Seat 05 — Hasnain" value="Row D, Seat 05">
+        </div>
+
+        <div id="trayItemsList" style="margin-top: 16px;"></div>
+
+        <!-- Step 1: Payment Option & Account/Card Validation -->
+        <div id="paymentStepPanel" style="display: none; margin-top: 18px; padding: 14px; border: 1px solid rgba(212,175,55,0.32); border-radius: 10px; background: rgba(255,255,255,0.03);">
+          <div style="font-weight: 700; color: var(--color-gold); margin-bottom: 10px;">Select Payment Option</div>
+
+          <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
+            <input type="radio" name="trayPaymentMethod" value="card" checked>
+            <span>Card (11-Digit Card Number)</span>
+          </label>
+
+          <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
+            <input type="radio" name="trayPaymentMethod" value="easypaisa">
+            <span>EasyPaisa (11-Digit Mobile Number)</span>
+          </label>
+
+          <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; cursor: pointer;">
+            <input type="radio" name="trayPaymentMethod" value="jazzcash">
+            <span>JazzCash (11-Digit Mobile Number)</span>
+          </label>
+
+          <div class="form-group" style="margin-bottom: 10px;">
+            <label class="form-label" id="paymentAccountLabel" for="trayAccountInput" style="font-size: 0.8rem;">Card Number (11 Digits)</label>
+            <input type="text" class="form-input" id="trayAccountInput" maxlength="14" placeholder="Enter 11-digit card number">
+          </div>
+
+          <div id="paymentValidationError" style="display: none; margin-bottom: 10px; padding: 8px 10px; border-radius: 8px; font-size: 0.82rem; background: rgba(220,38,38,0.18); border: 1px solid #ef4444; color: #fca5a5;"></div>
+
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-outline btn-sm" id="backToTrayBtn">Back</button>
+            <button type="button" class="btn btn-gold btn-sm" id="reviewBillOtpBtn" style="flex: 1;">Review Bill &amp; OTP</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Bill Summary & 4-Digit OTP Before Final Confirmation -->
+        <div id="billOtpPanel" style="display: none; margin-top: 18px; padding: 14px; border: 1px solid rgba(212,175,55,0.45); border-radius: 10px; background: rgba(255,255,255,0.04);">
+          <div style="font-weight: 700; color: var(--color-gold); margin-bottom: 8px;">Bill Summary &amp; OTP Verification</div>
+          <div id="billBreakdownBox" class="bill-summary-box" style="margin-bottom: 12px;"></div>
+
+          <div class="form-group" style="margin-bottom: 10px;">
+            <label class="form-label" for="trayOtpInput" style="font-size: 0.8rem;">Enter Any 4-Digit OTP</label>
+            <input type="text" class="form-input" id="trayOtpInput" maxlength="4" inputmode="numeric" placeholder="e.g. 1234">
+          </div>
+
+          <div id="otpValidationError" style="display: none; margin-bottom: 10px; padding: 8px 10px; border-radius: 8px; font-size: 0.82rem; background: rgba(220,38,38,0.18); border: 1px solid #ef4444; color: #fca5a5;"></div>
+
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-outline btn-sm" id="backToPaymentBtn">Edit Payment</button>
+            <button type="button" class="btn btn-gold btn-sm" id="confirmPaymentBtn" style="flex: 1;">Confirm Order</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="border-top: 1px solid var(--color-border); padding-top: 16px; margin-top: 20px;">
+        <div id="trayOrderAlert" style="display: none; margin-bottom: 12px; padding: 10px 12px; border-radius: 8px; font-size: 0.85rem;"></div>
+
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px;">
+          <strong>Total Payable</strong>
+          <strong id="trayTotal" class="booking-total-price" style="font-size: 1.25rem;">PKR 0</strong>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button type="button" class="btn btn-outline btn-sm" id="clearTrayBtn">Clear</button>
+          <button type="button" class="btn btn-gold btn-sm" id="placeTrayOrderBtn" style="flex: 1;">Proceed to Payment</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="brand-logo" style="margin-bottom: 18px;">
+            <div class="logo-crest" style="width: 38px; height: 38px;">
+              <span style="font-size: 1.2rem;">T</span>
+            </div>
+            <div class="brand-text">
+              <span class="brand-name" style="font-size: 1.2rem;">THEATRON</span>
+              <span class="brand-subtitle">CINEMA LOUNGES</span>
+            </div>
+          </div>
+          <p>
+            Islamabad's premier luxury cinema destination at F-7 Markaz. Delivering dual-laser IMAX projection, spatial sound, and butler concessions directly to your recliner.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Cinema &amp; Repertoire</h4>
+          <div class="footer-links">
+            <a href="cinema.html#repertoire">All-Genre Repertoire</a>
+            <a href="cinema.html#auditoriums">The Three Lounges</a>
+            <a href="cinema.html#gallery">Architecture Showcase</a>
+            <a href="cinema.html#floorplan">Interactive Floor Plan</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Food &amp; Snacks</h4>
+          <div class="footer-links">
+            <a href="food-snacks.html#concessionsMenu">Popcorn &amp; Classics</a>
+            <a href="food-snacks.html#concessionsMenu">Burgers, Pizza, Sweets &amp; Sips</a>
+            <a href="food-snacks.html#combos">Royal Screening Combos</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Guest Reviews &amp; Concierge</h4>
+          <div class="footer-links">
+            <a href="reviews.html#guestReviewsSection">Guest Reviews</a>
+            <a href="reviews.html#writeReviewBox">Write a Guest Review</a>
+            <a href="reviews.html#jokesCorner">Jokes Corner</a>
+          </div>
+          <p style="margin-top: 10px;">Plot 14-B, Street 14, F-7 Markaz, Islamabad, Pakistan</p>
+          <p><strong>Hotline:</strong> +92 51 8899770</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          © 2026 THEATRON Cinema Lounges. All Rights Reserved. Pure Cinema Sanctum.
+        </div>
+        <div style="display: flex; gap: 20px;">
+          <a href="cinema.html#faq" style="color: var(--color-text-dim);">Policies &amp; FAQ</a>
+          <a href="reviews.html" style="color: var(--color-text-dim);">Guest Reviews</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="theatron-app.js"></script>
+</body>
+</html>
