@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seat Selection | THEATRON Cinema Lounges</title>
+  <meta
+    name="description"
+    content="Select your private velvet seats across VIP Recliner, Prime, and Standard tiers at THEATRON Cinema Lounges."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&family=Playfair+Display:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="theatron-shared.css" />
+  <link rel="stylesheet" href="seat-selection.css" />
+</head>
+<body>
+  <!-- Shared Top Navigation Bar -->
+  <header class="site-header" role="banner">
+    <div class="nav-container">
+      <a href="index.html" class="brand-logo" aria-label="THEATRON Cinema Lounges Home">
+        <span class="brand-emblem" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="28" height="28" rx="6" stroke="#E2B45A" stroke-width="1.5" />
+            <path d="M9 10H23M16 10V23" stroke="#E2B45A" stroke-width="1.75" stroke-linecap="round" />
+            <circle cx="16" cy="23" r="1.5" fill="#E2B45A" />
+          </svg>
+        </span>
+        <span class="brand-text">
+          <span class="brand-title">THEATRON</span>
+          <span class="brand-subtitle">CINEMA LOUNGES</span>
+        </span>
+      </a>
+
+      <nav class="primary-nav" aria-label="Primary Navigation">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="movies.html" class="nav-link">Movies</a>
+        <a href="movies.html?status=coming-soon" class="nav-link">Coming Soon</a>
+        <a href="cinemas.html" class="nav-link">Cinemas</a>
+        <a href="showtimes.html" class="nav-link is-active" aria-current="page">Showtimes</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="my-bookings.html" class="tickets-badge" aria-label="View my tickets">
+          <svg class="badge-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path
+              d="M3 6.5A1.5 1.5 0 0 1 4.5 5h11A1.5 1.5 0 0 1 17 6.5v1.75a1.75 1.75 0 0 0 0 3.5v1.75a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 3 13.5v-1.75a1.75 1.75 0 0 0 0-3.5V6.5Z"
+              stroke="currentColor"
+              stroke-width="1.4"
+            />
+            <path d="M12.5 5.25v9.5" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2 2" />
+          </svg>
+          <span>Tickets</span>
+          <span class="tickets-count" id="nav-tickets-count">0</span>
+        </a>
+
+        <a href="my-bookings.html" class="profile-pill" aria-label="Patron profile">
+          <span class="profile-avatar" id="nav-patron-initials">AV</span>
+          <span class="profile-name" id="nav-patron-name">Alexander Vance</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="seat-page">
+    <!-- 1. 3-Step Booking Progress Bar -->
+    <nav class="booking-progress" aria-label="Booking steps">
+      <ol class="progress-steps">
+        <li class="progress-step is-completed">
+          <a href="showtimes.html" class="step-link">
+            <span class="step-marker" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3.5 8.2L6.5 11.2L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+            <span class="step-text">1. Showtimes</span>
+          </a>
+        </li>
+
+        <li class="progress-connector is-completed" aria-hidden="true"></li>
+
+        <li class="progress-step is-active" aria-current="step">
+          <div class="step-link">
+            <span class="step-marker" aria-hidden="true">2</span>
+            <span class="step-text">2. Seat Selection</span>
+          </div>
+        </li>
+
+        <li class="progress-connector" aria-hidden="true"></li>
+
+        <li class="progress-step">
+          <div class="step-link">
+            <span class="step-marker" aria-hidden="true">3</span>
+            <span class="step-text">3. Checkout</span>
+          </div>
+        </li>
+      </ol>
+    </nav>
+
+    <!-- 2. Empty State (shown if theatron_latest_booking is missing or invalid) -->
+    <section class="empty-booking-card" id="empty-booking-state" hidden aria-labelledby="empty-booking-title">
+      <div class="empty-icon-ring" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="5" y="8" width="22" height="16" rx="3" stroke="#E2B45A" stroke-width="1.6" />
+          <path d="M10 13h12M10 18h8" stroke="#E2B45A" stroke-width="1.6" stroke-linecap="round" />
+        </svg>
+      </div>
+      <p class="empty-eyebrow">NO ACTIVE SCREENING SELECTED</p>
+      <h1 class="empty-title" id="empty-booking-title">Choose a Showtime First</h1>
+      <p class="empty-copy">
+        Your reservation session has not selected a motion picture or lounge time yet. Return to our exhibition schedule to pick your screening.
+      </p>
+      <a href="showtimes.html" class="btn-primary" id="btn-back-to-showtimes">
+        Browse Showtimes &rarr;
+      </a>
+    </section>
+
+    <!-- 3. Active Seat Selection Workspace -->
+    <div id="seat-workspace" hidden>
+      <!-- Screening Summary Banner -->
+      <section class="screening-banner" aria-label="Selected screening summary">
+        <div class="banner-poster-wrap">
+          <img
+            id="summary-poster"
+            src=""
+            alt="Selected film poster"
+            class="banner-poster"
+          />
+        </div>
+
+        <div class="banner-info">
+          <div class="banner-header-row">
+            <div class="banner-title-block">
+              <p class="banner-eyebrow">PRIVATE LOUNGE RESERVATION</p>
+              <h1 class="banner-movie-title" id="summary-movie-title">THE VELVET SOVEREIGN</h1>
+            </div>
+
+            <div class="banner-badges" id="summary-film-badges">
+              <span class="meta-badge" id="summary-rating" hidden></span>
+              <span class="meta-badge" id="summary-runtime" hidden></span>
+              <span class="meta-badge" id="summary-language" hidden></span>
+            </div>
+          </div>
+
+          <dl class="banner-meta-grid">
+            <div class="banner-meta-item">
+              <dt>Cinema Sanctuary</dt>
+              <dd id="summary-cinema">-</dd>
+            </div>
+            <div class="banner-meta-item">
+              <dt>Auditorium Hall</dt>
+              <dd id="summary-hall">-</dd>
+            </div>
+            <div class="banner-meta-item">
+              <dt>Lounge Format</dt>
+              <dd class="is-gold" id="summary-format">-</dd>
+            </div>
+            <div class="banner-meta-item">
+              <dt>Date &amp; Showtime</dt>
+              <dd id="summary-datetime">-</dd>
+            </div>
+            <div class="banner-meta-item">
+              <dt>Base Price / Seat</dt>
+              <dd class="is-mono-gold" id="summary-base-price">PKR 0</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <!-- Auditorium Map + Sticky Order Summary Grid -->
+      <div class="seat-layout-grid">
+        <!-- Left: Interactive Auditorium Map -->
+        <section class="auditorium-panel" aria-labelledby="auditorium-heading">
+          <div class="auditorium-header">
+            <div>
+              <p class="panel-eyebrow">ACOUSTIC AUDITORIUM LAYOUT</p>
+              <h2 class="panel-title" id="auditorium-heading">Select Your Velvet Seating</h2>
+            </div>
+            <span class="seat-limit-pill" id="seat-limit-pill">Max 8 Seats</span>
+          </div>
+
+          <!-- Curved Screen Banner -->
+          <div class="screen-stage" aria-hidden="true">
+            <div class="screen-arc"></div>
+            <div class="screen-glow"></div>
+            <p class="screen-label">SCREEN THIS WAY</p>
+            <p class="screen-sublabel" id="screen-format-caption">DUAL-LASER PROJECTION &bull; DOLBY ACOUSTIC FIELD</p>
+          </div>
+
+          <!-- Status Notice / Max Seat Warning -->
+          <div class="seat-feedback-banner" id="seat-feedback" role="status" aria-live="polite" hidden></div>
+
+          <!-- Seat Map Rows Container -->
+          <div class="seat-map-scroll">
+            <div class="seat-map-tiers" id="seat-map-container" role="region" aria-label="Interactive seat map"></div>
+          </div>
+
+          <!-- Seat Legend -->
+          <div class="seat-legend" aria-label="Seat status legend">
+            <div class="legend-entry">
+              <span class="legend-swatch swatch-available" aria-hidden="true"></span>
+              <span>Available</span>
+            </div>
+            <div class="legend-entry">
+              <span class="legend-swatch swatch-selected" aria-hidden="true"></span>
+              <span>Selected</span>
+            </div>
+            <div class="legend-entry">
+              <span class="legend-swatch swatch-occupied" aria-hidden="true"></span>
+              <span>Occupied</span>
+            </div>
+            <div class="legend-entry">
+              <span class="legend-swatch swatch-vip" aria-hidden="true"></span>
+              <span>VIP Recliner</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right: Sticky Order Summary Sidebar -->
+        <aside class="order-summary-sidebar" aria-labelledby="order-summary-heading">
+          <div class="summary-card">
+            <div class="summary-card-header">
+              <p class="panel-eyebrow">RESERVATION SUMMARY</p>
+              <h2 class="summary-title" id="order-summary-heading">Your Seats</h2>
+            </div>
+
+            <div class="summary-screening-mini">
+              <p class="mini-movie" id="sidebar-movie-title">-</p>
+              <p class="mini-venue" id="sidebar-venue">-</p>
+              <p class="mini-time" id="sidebar-datetime">-</p>
+            </div>
+
+            <div class="selected-seats-section">
+              <div class="selected-seats-header">
+                <span class="section-label">Selected Seats</span>
+                <span class="seats-counter" id="sidebar-seat-ratio">0 / 8</span>
+              </div>
+
+              <div class="selected-badges-list" id="selected-seat-badges" aria-live="polite">
+                <p class="no-seats-hint">No seats selected yet. Click any available seat on the map.</p>
+              </div>
+            </div>
+
+            <div class="tier-breakdown" id="tier-breakdown" hidden></div>
+
+            <dl class="summary-totals">
+              <div class="total-row">
+                <dt>Tickets</dt>
+                <dd id="summary-ticket-count">0</dd>
+              </div>
+              <div class="total-row total-row-grand">
+                <dt>Seat Subtotal</dt>
+                <dd id="summary-seat-subtotal">PKR 0</dd>
+              </div>
+            </dl>
+
+            <div class="summary-actions">
+              <button
+                type="button"
+                class="btn-primary btn-checkout"
+                id="btn-proceed-checkout"
+                disabled
+              >
+                <span>Proceed to Checkout</span>
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                  <path
+                    d="M4.5 10h11m-4.5-4.5L15.5 10 11 14.5"
+                    stroke="currentColor"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+
+              <a href="showtimes.html" class="change-showtime-link" id="link-change-showtime">
+                &larr; Change Showtime
+              </a>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 THEATRON Cinema Lounges. Velvet Concierge Assistance available 24/7.</p>
+  </footer>
+
+  <script src="theatron-shared.js" defer></script>
+  <script src="seat-selection.js" defer></script>
+</body>
+</html>
