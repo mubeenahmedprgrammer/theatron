@@ -11,6 +11,7 @@
   const PREMIERES = [
     {
       id: 'dynasty-of-glass',
+      detailId: 'dynasty-glass',
       title: 'DYNASTY OF GLASS',
       genre: 'Drama',
       meta: 'English • 2h 35m • R',
@@ -28,6 +29,7 @@
     },
     {
       id: 'mirage-of-kings',
+      detailId: 'mirage-kings',
       title: 'MIRAGE OF KINGS',
       genre: 'Action',
       meta: 'Arabic • 2h 11m • PG-13',
@@ -45,6 +47,7 @@
     },
     {
       id: 'nocturne-in-vienna',
+      detailId: 'nocturne-obsidian',
       title: 'NOCTURNE IN VIENNA',
       genre: 'Thriller',
       meta: 'German • 2h 18m • R',
@@ -62,6 +65,7 @@
     },
     {
       id: 'the-obsidian-meridian',
+      detailId: 'ninth-monolith',
       title: 'THE OBSIDIAN MERIDIAN',
       genre: 'Sci-Fi',
       meta: 'English • 2h 44m • PG-13',
@@ -490,6 +494,7 @@
   }
 
   function openTeaserModal(film) {
+    const detailId = film.detailId || film.id;
     openModal(
       `4K TEASER REEL & SCREENING NOTES • ${film.genre.toUpperCase()}`,
       film.title,
@@ -515,9 +520,26 @@
             <p class="eyebrow">CURATORIAL SCREENING NOTES</p>
             <p class="mt-1.5 leading-relaxed text-[#9E9895]">${escapeHtml(film.screeningNotes)}</p>
           </div>
+
+          <div class="flex flex-wrap items-center justify-end gap-3 pt-2">
+            <button
+              id="moreDetailsModalBtn"
+              type="button"
+              data-more-details="${escapeHtml(detailId)}"
+              class="inline-flex items-center justify-center gap-2 rounded-xl bg-[#D4AF6A] px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-[#121011] transition hover:bg-[#e2c282]"
+            >
+              <span>More Details</span>
+              <span aria-hidden="true">&rarr;</span>
+            </button>
+          </div>
         </div>
       `
     );
+
+    const moreDetailsBtn = document.getElementById('moreDetailsModalBtn');
+    moreDetailsBtn?.addEventListener('click', () => {
+      window.location.href = `movie-details.html?id=${encodeURIComponent(detailId)}`;
+    });
   }
 
   function initModals() {
