@@ -1,448 +1,297 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Food &amp; Snacks Lounge | THEATRON Cinema Lounges</title>
-  <meta name="description" content="Order cinema popcorn, burgers, pizza, sweets, beverages, and combos by screening genre with in-seat butler delivery at THEATRON Islamabad.">
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THEATRON | Food, Movie Pairings & In-Seat Payment</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="mem5.css">
   <style>
-    :root {
-      --color-obsidian-bg: #090305;
-      --color-border: rgba(212, 175, 55, 0.22);
-      --color-gold: #d4af37;
-      --color-text-light: #e6dfd8;
-      --color-text-dim: #a89f97;
-    }
-
-    .food-hero-backdrop {
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-      background:
-        radial-gradient(circle at 25% 25%, rgba(158, 27, 50, 0.34), transparent 55%),
-        radial-gradient(circle at 78% 30%, rgba(212, 175, 55, 0.16), transparent 50%),
-        linear-gradient(180deg, #170409 0%, #0b0205 70%, #080204 100%);
-    }
-
-    .food-hero-photo {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0.34;
-    }
-
-    .page-subnav-bar {
-      background: rgba(14, 4, 8, 0.96);
-      border-top: 1px solid rgba(212, 175, 55, 0.16);
-      border-bottom: 1px solid rgba(212, 175, 55, 0.24);
-      padding: 10px 0;
-    }
-
-    .page-subnav-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .page-subnav-title {
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--color-gold);
+    .subpage-tab-btn {
+      background: #160508;
+      border: 1px solid var(--border-burgundy);
+      color: var(--text-muted);
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 13px;
       font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s ease;
     }
-
-    .page-subnav-links {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
+    .subpage-tab-btn:hover { color: #fff; border-color: var(--gold-primary); }
+    .subpage-tab-btn.active {
+      background: linear-gradient(135deg, #6e1222, #3b0811);
+      border-color: var(--gold-primary);
+      color: var(--gold-light);
+      box-shadow: 0 6px 22px rgba(158, 27, 50, 0.48);
     }
-
-    .page-subnav-link {
-      font-size: 0.84rem;
-      color: var(--color-text-light);
-      padding: 5px 11px;
-      border-radius: 999px;
-      border: 1px solid rgba(212, 175, 55, 0.22);
-      background: rgba(255, 255, 255, 0.03);
-      text-decoration: none;
-      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    .pay-method-btn {
+      background: #140407;
+      border: 1px solid var(--border-burgundy);
+      color: var(--text-muted);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      transition: 0.2s;
     }
-
-    .page-subnav-link:hover,
-    .page-subnav-link.active {
-      background: rgba(212, 175, 55, 0.16);
-      border-color: var(--color-gold);
-      color: #fff;
-    }
-
-    .filter-bar-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 28px;
-    }
-
-    .filter-row-label {
-      text-align: center;
-      font-size: 0.78rem;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--color-gold);
-      margin-bottom: 4px;
-    }
-
-    .bill-summary-box {
-      margin-top: 12px;
-      padding: 12px;
-      border-radius: 8px;
-      background: rgba(0, 0, 0, 0.28);
-      border: 1px solid rgba(212, 175, 55, 0.25);
-      font-size: 0.84rem;
-    }
-
-    .bill-line {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 6px;
-      color: var(--color-text-light);
-    }
-
-    .bill-line:last-child {
-      margin-bottom: 0;
-      padding-top: 6px;
-      border-top: 1px dashed rgba(212, 175, 55, 0.3);
-      font-weight: 700;
-      color: #fff;
+    .pay-method-btn.active {
+      border-color: var(--gold-primary);
+      background: rgba(212, 175, 55, 0.14);
+      color: var(--gold-light);
     }
   </style>
 </head>
 <body>
+  <canvas id="ambientDustCanvas"></canvas>
+  <div class="cursor-spotlight" id="cursorSpotlight"></div>
 
-  <!-- ================= TOP UTILITY BAR ================= -->
-  <aside class="utility-bar" aria-label="Concessions Announcements">
-    <div class="container utility-bar-inner">
-      <div class="utility-left">
-        <span class="utility-item">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-          <strong>In-Seat Butler Service:</strong> Active in Halls 01, 02 &amp; 03
-        </span>
-        <span class="utility-item">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-          Avg. Recliner Delivery: 8–12 Mins
-        </span>
-      </div>
-      <div class="utility-right">
-        <span class="utility-item">
-          <span class="status-dot"></span>
-          <span>Kitchen &amp; Mixology Bar Open • Freshly Popped</span>
-        </span>
-        <span class="utility-item">
-          <span class="badge badge-gold">PKR • BUTLER TRAY</span>
-        </span>
-      </div>
+  <div class="top-utility">
+    <div>
+      <span>IN-SEAT BUTLER DINING &amp; GOURMET CONCESSIONS</span>
+      <span class="mx-2">|</span>
+      <span><i class="gold-dot"></i>ISLAMABAD FLAGSHIP • FOOD &amp; SNACKS</span>
     </div>
-  </aside>
-
-  <!-- ================= STICKY NAVBAR (3 MAIN PAGES) ================= -->
-  <header class="main-header" id="mainHeader">
-    <div class="container navbar">
-      <a href="cinema.html" class="brand-logo" aria-label="THEATRON Homepage">
-        <div class="logo-crest">
-          <span>T</span>
-        </div>
-        <div class="brand-text">
-          <span class="brand-name">THEATRON</span>
-          <span class="brand-subtitle">CINEMA LOUNGES • ISLAMABAD</span>
-        </div>
-      </a>
-
-      <nav class="nav-menu" id="navMenu" aria-label="Main Pages">
-        <a href="cinema.html" class="nav-link" data-main-page="cinema">Cinema &amp; Repertoire</a>
-        <a href="food-snacks.html" class="nav-link active" data-main-page="food">Food &amp; Snacks</a>
-        <a href="reviews.html" class="nav-link" data-main-page="reviews">Guest Reviews</a>
-      </nav>
-
-      <div class="nav-actions">
-        <button type="button" class="cart-toggle-btn" id="openTrayBtn" aria-label="Open Lounge Tray">
-          <span>Lounge Tray</span>
-          <span class="cart-badge" id="navTrayCount">0</span>
-        </button>
-        <a href="cinema.html#floorplan" class="btn btn-primary btn-sm">Reserve Seats</a>
-        <button type="button" class="nav-hamburger" id="navHamburger" aria-label="Toggle navigation">☰</button>
-      </div>
+    <div>
+      <span>SILENT DELIVERY TO YOUR RECLINER</span>
+      <span class="mx-2">|</span>
+      <span>Alexander</span>
     </div>
+  </div>
 
-    <!-- Sub-items shown directly underneath the active main page -->
-    <div class="page-subnav-bar" id="activePageSubnav" aria-label="Food & Snacks Contents">
-      <div class="container page-subnav-inner">
-        <span class="page-subnav-title">Inside Food &amp; Snacks:</span>
-        <div class="page-subnav-links" id="subnavLinks">
-          <a href="#concessionsMenu" class="page-subnav-link active" data-subfilter="all">All Menu Items</a>
-          <a href="#concessionsMenu" class="page-subnav-link" data-subfilter="popcorn">Popcorn &amp; Classics</a>
-          <a href="#concessionsMenu" class="page-subnav-link" data-subfilter="mains">Burgers, Pizza &amp; Bites</a>
-          <a href="#concessionsMenu" class="page-subnav-link" data-subfilter="sweets">Sweets &amp; Sips</a>
-          <a href="#combos" class="page-subnav-link" data-subfilter="combos">Royal Screening Combos</a>
-          <button type="button" class="page-subnav-link" id="subnavTrayBtn" style="cursor:pointer;">Lounge Tray</button>
-        </div>
+  <nav class="navbar">
+    <a href="cinema-detail.html" class="brand">
+      <div class="brand-icon">T</div>
+      <div class="brand-text">
+        <h1>THEATRON</h1>
+        <span>CINEMA LOUNGES</span>
       </div>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="cinema-detail.html" class="nav-link">Cinema Details</a></li>
+      <li><a href="food-snacks.html" class="nav-link active">Food &amp; Snacks</a></li>
+      <li><a href="reviews.html" class="nav-link">Reviews</a></li>
+    </ul>
+
+    <div>
+      <button class="tray-btn" onclick="toggleTrayDrawer()">
+        <span>🍿 Lounge Tray</span>
+        <span class="badge-count" id="trayCount">2</span>
+      </button>
     </div>
-  </header>
+  </nav>
 
-  <main>
-    <!-- ================= FOOD HERO BANNER ================= -->
-    <section class="hero-section" style="min-height: 54vh; padding-top: 112px; padding-bottom: 52px;">
-      <div class="food-hero-backdrop">
-        <img class="food-hero-photo" src="images/food-hero.jpg" alt="THEATRON cinema concessions" onerror="this.style.display='none'">
-        <div class="hero-overlay"></div>
-      </div>
+  <main style="position: relative; z-index: 2;">
+    <!-- HERO WITH LOCAL food-clip.mp4 -->
+    <section class="hero-section">
+      <span class="pill-tag">ARTISANAL CONCESSIONS • MOVIE-PAIRED DINING</span>
+      <h2 class="hero-title">
+        CURATED FOR THE DARK.
+        <span>DELIVERED TO YOUR SEAT.</span>
+      </h2>
+      <p class="hero-subtitle">
+        Select your movie to unlock chef-matched gourmet pairings, explore signature combos, vote in our live Snack Battle Arena, and complete your seat delivery payment below.
+      </p>
 
-      <div class="container hero-content">
-        <div class="hero-tag">
-          <span class="tag-spark">✦</span>
-          HAUTE CONCESSIONS • IN-SEAT BUTLER DELIVERY
-          <span class="tag-spark">✦</span>
-        </div>
-
-        <h1 class="hero-title" style="font-size: clamp(2.2rem, 4.5vw, 3.6rem);">
-          Artisan Concessions &amp; <span>Recliner Dining</span>
-        </h1>
-
-        <p class="hero-lead">
-          Crafted for film evenings in F-7 Markaz. Pick popcorn, burgers, pizza, sweets, chai, and combos by category or screening genre, then order straight to your recliner.
-        </p>
-
-        <div class="hero-actions" style="margin-bottom: 0;">
-          <a href="#concessionsMenu" class="btn btn-gold">
-            <span>Browse Full Menu</span>
-          </a>
-          <a href="#combos" class="btn btn-outline">
-            <span>Premiere Combos</span>
-          </a>
-          <button type="button" class="btn btn-primary" id="heroTrayBtn">
-            <span>Open Lounge Tray (<span id="heroTrayCount">0</span>)</span>
-          </button>
+      <div class="lcd-master-frame">
+        <div class="video-slot-box h-64 md:h-80">
+          <video class="w-full h-full object-cover" autoplay loop muted playsinline disablepictureinpicture poster="images/combo-royal-feast.jpg">
+            <source src="food-clip.mp4" type="video/mp4">
+          </video>
+          <div class="absolute inset-0 flex flex-col justify-end p-6 text-left" style="background: linear-gradient(to top, rgba(13,4,6,0.92), transparent 65%);">
+            <span class="text-xs font-bold uppercase tracking-widest" style="color: var(--gold-primary);">LIVE KITCHEN &amp; LOUNGE SHOWCASE</span>
+            <h3 style="font-family: var(--font-display); font-size: 22px; color: #fff;">TRUFFLE POPCORN, WAGYU SMASH &amp; HERITAGE PLATTERS</h3>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- ================= INTERACTIVE CONCESSIONS CATALOG ================= -->
-    <section class="section-padding" id="concessionsMenu" style="background: var(--color-obsidian-bg);">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-tag">Curated Culinary Lineup</span>
-          <h2 class="section-title">Snacks, Burgers, Pizza, Sweets &amp; Sips</h2>
-          <p class="section-subtitle">
-            Filter independently by food category and movie genre.
-          </p>
+    <!-- PAGES INSIDE PAGE: SUB-PAGE NAVIGATION BAR -->
+    <section id="foodSubpageAnchor" class="max-w-6xl mx-auto px-4 pb-16 space-y-8">
+      <div class="p-4 rounded-2xl flex flex-wrap justify-between items-center gap-3" style="background: #140407; border: 1.5px solid var(--border-gold);">
+        <div class="flex flex-wrap gap-2">
+          <button id="tab-food-menu" class="subpage-tab-btn active" onclick="switchSubPage('food-subpages', 'food-sub-menu', this)">🍿 01. Movie-Paired Menu (21 Items)</button>
+          <button id="tab-food-combos" class="subpage-tab-btn" onclick="switchSubPage('food-subpages', 'food-sub-combos', this)">🔥 02. Signature Combos</button>
+          <button id="tab-food-battle" class="subpage-tab-btn" onclick="switchSubPage('food-subpages', 'food-sub-battle', this)">⚔️ 03. Snack Battle Arena</button>
+          <button id="tab-food-checkout" class="subpage-tab-btn" onclick="switchSubPage('food-subpages', 'food-sub-checkout', this)">💳 04. Order &amp; Payment Checkout</button>
+        </div>
+        <span class="text-[11px] uppercase tracking-wider font-bold" style="color: var(--gold-light);">Pages Inside Food Lounge ↓</span>
+      </div>
+
+      <!-- SUB-PAGE 1: MOVIE-PAIRED MENU -->
+      <div id="food-sub-menu" data-subpage-group="food-subpages" class="space-y-6">
+        <!-- Select Food According to Movie Bar -->
+        <div class="rounded-2xl p-5 md:p-6 space-y-4" style="background: linear-gradient(145deg, #21070c, #100305); border: 1.5px solid var(--border-gold);">
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+            <div class="md:col-span-5">
+              <label class="text-[11px] uppercase tracking-wider font-bold block mb-1.5" style="color: var(--gold-primary);">🎬 Select Food According to Movie</label>
+              <select id="movieFoodSelector" onchange="setMovieForFood(this.value)" class="seat-select w-full font-semibold">
+                <option value="All">All Movies — Show Full 21-Item Menu</option>
+              </select>
+            </div>
+            <div class="md:col-span-7" id="moviePairingBanner"></div>
+          </div>
+
+          <div class="flex flex-wrap justify-between items-center gap-3 pt-3" style="border-top: 1px solid rgba(255,255,255,0.08);">
+            <div class="flex flex-wrap gap-2" id="foodCategoryTabs">
+              <button class="filter-btn active" onclick="setFoodCategory('All', this)">All Categories</button>
+              <button class="filter-btn" onclick="setFoodCategory('Popcorn', this)">🍿 Popcorn</button>
+              <button class="filter-btn" onclick="setFoodCategory('Gourmet Snacks', this)">🍔 Gourmet Snacks</button>
+              <button class="filter-btn" onclick="setFoodCategory('Drinks', this)">🥂 Drinks</button>
+              <button class="filter-btn" onclick="setFoodCategory('Heritage Pakistani', this)">🍛 Heritage Pakistani</button>
+            </div>
+            <input id="foodSearchInput" oninput="filterFoodMenu()" type="text" placeholder="Search truffle, wagyu, samosa..." class="seat-select w-full sm:w-64">
+          </div>
         </div>
 
-        <div class="filter-bar-stack">
-          <div>
-            <div class="filter-row-label">By Category</div>
-            <div class="genre-filter-wrapper" id="foodCategoryFilters" style="margin-bottom: 8px;">
-              <button type="button" class="genre-filter-btn active" data-cat="all">All Categories</button>
-              <button type="button" class="genre-filter-btn" data-cat="popcorn">Popcorn &amp; Classics</button>
-              <button type="button" class="genre-filter-btn" data-cat="mains">Burgers, Pizza &amp; Bites</button>
-              <button type="button" class="genre-filter-btn" data-cat="sweets">Sweets &amp; Sips</button>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="foodGrid"></div>
+      </div>
+
+      <!-- SUB-PAGE 2: CURATED COMBOS -->
+      <div id="food-sub-combos" data-subpage-group="food-subpages" style="display: none;">
+        <div class="combo-marquee">
+          <div class="mb-6">
+            <span class="text-xs uppercase tracking-widest font-bold" style="color: var(--gold-primary);">BUNDLED FOR PREMIERE NIGHTS</span>
+            <h3 style="font-family: var(--font-display); font-size: 26px; color: #fff;">SIGNATURE LOUNGE COMBOS</h3>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" id="combosGrid"></div>
+        </div>
+      </div>
+
+      <!-- SUB-PAGE 3: SNACK BATTLE ARENA -->
+      <div id="food-sub-battle" data-subpage-group="food-subpages" style="display: none;">
+        <div class="battle-arena-box">
+          <div class="mb-6">
+            <span class="text-xs uppercase tracking-widest font-bold" style="color: var(--gold-primary);">LIVE AUDIENCE POLL • ISLAMABAD</span>
+            <h3 style="font-family: var(--font-display); font-size: 26px; color: #fff;">THEATRON SNACK BATTLE ARENA</h3>
+            <p class="text-xs mt-1" style="color: var(--text-muted);">Cast your vote for this week's top cinema snacks. Winning items get 15% off during Friday midnight premieres.</p>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" id="battleArenaGrid"></div>
+        </div>
+      </div>
+
+      <!-- SUB-PAGE 4: ORDER & PAYMENT WORKFLOW -->
+      <div id="food-sub-checkout" data-subpage-group="food-subpages" style="display: none;">
+        <div class="rounded-3xl p-6 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8" style="background: linear-gradient(155deg, #1d060b 0%, #0d0204 100%); border: 1.5px solid var(--border-gold);">
+          <!-- Left: Order Summary -->
+          <div class="lg:col-span-5 space-y-4">
+            <div class="flex justify-between items-center">
+              <h3 style="font-family: var(--font-display); font-size: 21px; color: var(--gold-primary);">🧾 YOUR TRAY SUMMARY</h3>
+              <span id="checkoutMovieTag" class="movie-badge-pill">General Lounge Dining</span>
+            </div>
+            <div id="checkoutOrderItems" class="space-y-2.5"></div>
+            <div class="p-4 rounded-2xl space-y-2" style="background: #120306; border: 1px solid var(--border-burgundy);">
+              <div class="flex justify-between text-xs" style="color: var(--text-muted);">
+                <span>Items Subtotal</span>
+                <span id="checkoutSubtotal">PKR 0</span>
+              </div>
+              <div class="flex justify-between text-xs" style="color: var(--text-muted);">
+                <span>Silent Butler Seat Service</span>
+                <span id="checkoutTax">PKR 150</span>
+              </div>
+              <div class="flex justify-between text-sm font-extrabold pt-2" style="border-top: 1px solid rgba(255,255,255,0.08); color: var(--gold-light);">
+                <span>Total Payable</span>
+                <span id="checkoutGrandTotal">PKR 0</span>
+              </div>
             </div>
           </div>
 
-          <div>
-            <div class="filter-row-label">By Movie Genre Pairing</div>
-            <div class="genre-filter-wrapper" id="foodGenreFilters">
-              <button type="button" class="genre-filter-btn active" data-genre="all">All Genres</button>
-              <button type="button" class="genre-filter-btn" data-genre="action">Action &amp; IMAX</button>
-              <button type="button" class="genre-filter-btn" data-genre="thriller">Midnight &amp; Thriller</button>
-              <button type="button" class="genre-filter-btn" data-genre="romance">Drama &amp; Romance</button>
-              <button type="button" class="genre-filter-btn" data-genre="comedy">Comedy &amp; Family</button>
-            </div>
+          <!-- Right: Seat Delivery & Payment Form -->
+          <div class="lg:col-span-7">
+            <h3 style="font-family: var(--font-display); font-size: 21px; color: #fff; margin-bottom: 12px;">💳 SEAT DELIVERY &amp; PAYMENT</h3>
+            <form onsubmit="submitFoodPaymentOrder(event)" class="space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[11px] block mb-1" style="color: var(--text-muted);">Guest Name</label>
+                  <input id="payGuestName" type="text" required value="Alexander" class="seat-select w-full">
+                </div>
+                <div>
+                  <label class="text-[11px] block mb-1" style="color: var(--text-muted);">Auditorium Hall</label>
+                  <select id="payHallSelect" class="seat-select w-full">
+                    <option>Hall 01 • Dual-Laser IMAX</option>
+                    <option>Hall 02 • Royal Velvet Lounge</option>
+                    <option>Hall 03 • Dolby Atmos VIP</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="text-[11px] block mb-1" style="color: var(--text-muted);">Row &amp; Seat Number</label>
+                  <input id="paySeatInput" type="text" required value="Row E • Seat 12" class="seat-select w-full">
+                </div>
+                <div>
+                  <label class="text-[11px] block mb-1" style="color: var(--text-muted);">Delivery Timing</label>
+                  <select id="payDeliveryTime" class="seat-select w-full">
+                    <option>Before Opening Trailers</option>
+                    <option selected>15 Minutes Into Movie</option>
+                    <option>At Intermission</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class="text-[11px] block mb-1.5" style="color: var(--gold-primary);">Select Payment Method</label>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <button type="button" class="pay-method-btn active" onclick="selectPaymentMethod('Credit / Debit Card', this)">💳 Card</button>
+                  <button type="button" class="pay-method-btn" onclick="selectPaymentMethod('JazzCash', this)">📱 JazzCash</button>
+                  <button type="button" class="pay-method-btn" onclick="selectPaymentMethod('EasyPaisa', this)">📲 EasyPaisa</button>
+                  <button type="button" class="pay-method-btn" onclick="selectPaymentMethod('Pay at Seat (Butler POS)', this)">🛎️ Butler POS</button>
+                </div>
+              </div>
+
+              <div id="cardPaymentFields" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <input type="text" placeholder="Card Number (4242 •••• 4242)" class="seat-select sm:col-span-2">
+                <input type="text" placeholder="MM/YY • CVV" class="seat-select">
+              </div>
+
+              <div id="walletPaymentFields" style="display: none;">
+                <input type="text" placeholder="Mobile Wallet Number (03XX-XXXXXXX)" class="seat-select w-full">
+              </div>
+
+              <div id="cashPaymentNote" style="display: none;" class="p-3 rounded-xl text-xs" style="background: #120306; color: var(--gold-light);">
+                Our butler will bring a wireless tap-to-pay terminal or accept cash silently at your seat upon delivery.
+              </div>
+
+              <button type="submit" class="gold-cta-btn w-full">Complete Payment &amp; Dispatch Order →</button>
+            </form>
+
+            <div id="paymentReceiptBox" class="mt-4" style="display: none;"></div>
           </div>
-        </div>
-
-        <!-- Dynamic Food Grid -->
-        <div class="movies-grid" id="foodMenuGrid" style="margin-bottom: 64px;"></div>
-
-        <!-- ================= PREMIERE COMBOS SECTION ================= -->
-        <div id="combos" style="padding-top: 20px;">
-          <div class="section-header">
-            <span class="section-tag">Best Value Pairings</span>
-            <h2 class="section-title">Royal Screening Combos</h2>
-            <p class="section-subtitle">
-              Curated combos matched to your screening mood—also filtered when you pick a genre above.
-            </p>
-          </div>
-
-          <div class="movies-grid" id="combosGrid"></div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- ================= SLIDE-OVER LOUNGE TRAY & PAYMENT DRAWER ================= -->
-  <div class="modal-backdrop" id="trayDrawer" role="dialog" aria-modal="true" aria-labelledby="trayHeading" style="justify-content: flex-end; padding: 0;">
-    <div class="modal-card" style="max-width: 450px; height: 100vh; max-height: 100vh; border-radius: 0; border-right: none; border-top: none; border-bottom: none; display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto;">
+  <!-- LOUNGE TRAY DRAWER -->
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="toggleTrayDrawer()"></div>
+  <aside class="slide-drawer" id="trayDrawer">
+    <div class="flex justify-between items-center pb-4 mb-4" style="border-bottom: 1px solid var(--border-burgundy);">
       <div>
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 16px; margin-bottom: 20px;">
-          <div>
-            <span class="modal-tag">Butler Order Tray</span>
-            <h3 class="modal-title" id="trayHeading" style="font-size: 1.4rem; margin: 0;">Your Lounge Tray</h3>
-          </div>
-          <button type="button" class="modal-close-btn" id="closeTrayBtn" style="position: static;" aria-label="Close Lounge Tray">✕</button>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="deliveryModeSelect">Service &amp; Delivery Mode</label>
-          <select class="form-select" id="deliveryModeSelect">
-            <option value="In-Seat Butler (Hall 01 — IMAX)">In-Seat Butler (Hall 01 — IMAX)</option>
-            <option value="In-Seat Butler (Hall 02 — Atmos)">In-Seat Butler (Hall 02 — Atmos)</option>
-            <option value="In-Seat Butler (Hall 03 — Royal Salon)">In-Seat Butler (Hall 03 — Royal Salon)</option>
-            <option value="Express Pickup — Gourmet Bar (F-7)">Express Pickup — Gourmet Bar (F-7)</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="seatOrGuestRef">Seat / Recliner or Guest Name</label>
-          <input type="text" class="form-input" id="seatOrGuestRef" placeholder="e.g. Row D, Seat 05 — Hasnain" value="Row D, Seat 05">
-        </div>
-
-        <div id="trayItemsList" style="margin-top: 16px;"></div>
-
-        <!-- Step 1: Payment Option & Account/Card Validation -->
-        <div id="paymentStepPanel" style="display: none; margin-top: 18px; padding: 14px; border: 1px solid rgba(212,175,55,0.32); border-radius: 10px; background: rgba(255,255,255,0.03);">
-          <div style="font-weight: 700; color: var(--color-gold); margin-bottom: 10px;">Select Payment Option</div>
-
-          <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
-            <input type="radio" name="trayPaymentMethod" value="card" checked>
-            <span>Card (11-Digit Card Number)</span>
-          </label>
-
-          <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer;">
-            <input type="radio" name="trayPaymentMethod" value="easypaisa">
-            <span>EasyPaisa (11-Digit Mobile Number)</span>
-          </label>
-
-          <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; cursor: pointer;">
-            <input type="radio" name="trayPaymentMethod" value="jazzcash">
-            <span>JazzCash (11-Digit Mobile Number)</span>
-          </label>
-
-          <div class="form-group" style="margin-bottom: 10px;">
-            <label class="form-label" id="paymentAccountLabel" for="trayAccountInput" style="font-size: 0.8rem;">Card Number (11 Digits)</label>
-            <input type="text" class="form-input" id="trayAccountInput" maxlength="14" placeholder="Enter 11-digit card number">
-          </div>
-
-          <div id="paymentValidationError" style="display: none; margin-bottom: 10px; padding: 8px 10px; border-radius: 8px; font-size: 0.82rem; background: rgba(220,38,38,0.18); border: 1px solid #ef4444; color: #fca5a5;"></div>
-
-          <div style="display: flex; gap: 8px;">
-            <button type="button" class="btn btn-outline btn-sm" id="backToTrayBtn">Back</button>
-            <button type="button" class="btn btn-gold btn-sm" id="reviewBillOtpBtn" style="flex: 1;">Review Bill &amp; OTP</button>
-          </div>
-        </div>
-
-        <!-- Step 2: Bill Summary & 4-Digit OTP Before Final Confirmation -->
-        <div id="billOtpPanel" style="display: none; margin-top: 18px; padding: 14px; border: 1px solid rgba(212,175,55,0.45); border-radius: 10px; background: rgba(255,255,255,0.04);">
-          <div style="font-weight: 700; color: var(--color-gold); margin-bottom: 8px;">Bill Summary &amp; OTP Verification</div>
-          <div id="billBreakdownBox" class="bill-summary-box" style="margin-bottom: 12px;"></div>
-
-          <div class="form-group" style="margin-bottom: 10px;">
-            <label class="form-label" for="trayOtpInput" style="font-size: 0.8rem;">Enter Any 4-Digit OTP</label>
-            <input type="text" class="form-input" id="trayOtpInput" maxlength="4" inputmode="numeric" placeholder="e.g. 1234">
-          </div>
-
-          <div id="otpValidationError" style="display: none; margin-bottom: 10px; padding: 8px 10px; border-radius: 8px; font-size: 0.82rem; background: rgba(220,38,38,0.18); border: 1px solid #ef4444; color: #fca5a5;"></div>
-
-          <div style="display: flex; gap: 8px;">
-            <button type="button" class="btn btn-outline btn-sm" id="backToPaymentBtn">Edit Payment</button>
-            <button type="button" class="btn btn-gold btn-sm" id="confirmPaymentBtn" style="flex: 1;">Confirm Order</button>
-          </div>
-        </div>
+        <h3 style="font-family: var(--font-display); font-size: 19px; color: var(--gold-primary);">🍿 LOUNGE TRAY</h3>
+        <span class="text-[11px]" style="color: var(--text-muted);">Silent In-Seat Butler Delivery</span>
       </div>
-
-      <div style="border-top: 1px solid var(--color-border); padding-top: 16px; margin-top: 20px;">
-        <div id="trayOrderAlert" style="display: none; margin-bottom: 12px; padding: 10px 12px; border-radius: 8px; font-size: 0.85rem;"></div>
-
-        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px;">
-          <strong>Total Payable</strong>
-          <strong id="trayTotal" class="booking-total-price" style="font-size: 1.25rem;">PKR 0</strong>
-        </div>
-
-        <div style="display: flex; gap: 10px;">
-          <button type="button" class="btn btn-outline btn-sm" id="clearTrayBtn">Clear</button>
-          <button type="button" class="btn btn-gold btn-sm" id="placeTrayOrderBtn" style="flex: 1;">Proceed to Payment</button>
-        </div>
-      </div>
+      <button onclick="toggleTrayDrawer()" class="px-2.5 py-1 rounded text-xs font-bold" style="background: #25080e; color: #fff;">✕</button>
     </div>
-  </div>
 
-  <!-- ================= FOOTER ================= -->
-  <footer class="main-footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-col">
-          <div class="brand-logo" style="margin-bottom: 18px;">
-            <div class="logo-crest" style="width: 38px; height: 38px;">
-              <span style="font-size: 1.2rem;">T</span>
-            </div>
-            <div class="brand-text">
-              <span class="brand-name" style="font-size: 1.2rem;">THEATRON</span>
-              <span class="brand-subtitle">CINEMA LOUNGES</span>
-            </div>
-          </div>
-          <p>
-            Islamabad's premier luxury cinema destination at F-7 Markaz. Delivering dual-laser IMAX projection, spatial sound, and butler concessions directly to your recliner.
-          </p>
-        </div>
+    <div id="trayItemsContainer" class="flex-1 space-y-2.5 overflow-y-auto pr-1"></div>
 
-        <div class="footer-col">
-          <h4>Cinema &amp; Repertoire</h4>
-          <div class="footer-links">
-            <a href="cinema.html#repertoire">All-Genre Repertoire</a>
-            <a href="cinema.html#auditoriums">The Three Lounges</a>
-            <a href="cinema.html#gallery">Architecture Showcase</a>
-            <a href="cinema.html#floorplan">Interactive Floor Plan</a>
-          </div>
-        </div>
-
-        <div class="footer-col">
-          <h4>Food &amp; Snacks</h4>
-          <div class="footer-links">
-            <a href="food-snacks.html#concessionsMenu">Popcorn &amp; Classics</a>
-            <a href="food-snacks.html#concessionsMenu">Burgers, Pizza, Sweets &amp; Sips</a>
-            <a href="food-snacks.html#combos">Royal Screening Combos</a>
-          </div>
-        </div>
-
-        <div class="footer-col">
-          <h4>Guest Reviews &amp; Concierge</h4>
-          <div class="footer-links">
-            <a href="reviews.html#guestReviewsSection">Guest Reviews</a>
-            <a href="reviews.html#writeReviewBox">Write a Guest Review</a>
-            <a href="reviews.html#jokesCorner">Jokes Corner</a>
-          </div>
-          <p style="margin-top: 10px;">Plot 14-B, Street 14, F-7 Markaz, Islamabad, Pakistan</p>
-          <p><strong>Hotline:</strong> +92 51 8899770</p>
-        </div>
+    <div class="pt-4 mt-4" style="border-top: 1px solid var(--border-burgundy);">
+      <div class="flex justify-between items-center mb-3">
+        <span class="text-xs uppercase tracking-wider" style="color: var(--text-muted);">Subtotal</span>
+        <strong id="traySubtotal" style="font-family: var(--font-display); font-size: 18px; color: var(--gold-primary);">PKR 0</strong>
       </div>
-
-      <div class="footer-bottom">
-        <div>
-          © 2026 THEATRON Cinema Lounges. All Rights Reserved. Pure Cinema Sanctum.
-        </div>
-        <div style="display: flex; gap: 20px;">
-          <a href="cinema.html#faq" style="color: var(--color-text-dim);">Policies &amp; FAQ</a>
-          <a href="reviews.html" style="color: var(--color-text-dim);">Guest Reviews</a>
-        </div>
-      </div>
+      <button onclick="proceedToPaymentFromDrawer()" class="gold-cta-btn w-full">Proceed to Order &amp; Payment →</button>
     </div>
-  </footer>
+  </aside>
 
-  <script src="theatron-app.js"></script>
+  <div class="toast-banner" id="toastBanner"></div>
+  <script src="memb5script.js"></script>
 </body>
 </html>
